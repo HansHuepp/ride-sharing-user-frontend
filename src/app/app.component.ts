@@ -13,8 +13,12 @@ declare let window:any;
 })
 export class AppComponent {
   web3: Web3 | undefined;
-  contractFactoryAddress = '0xd9145CCE52D386f254917e481eB44e9943F39138';
+  contractFactoryAddress = '0x41129a06B1ffbB649c90a63fD8013Fef71B157c3';
   contractFactory: Contract | undefined | any;;
+
+  myAddress: string | null = null;
+  myBalance: string | null = null;
+  rideContractAddress: string | null = null;
 
   async connectMetaMask() {
     if (typeof window.ethereum === 'undefined') {
@@ -29,20 +33,19 @@ export class AppComponent {
 
       // Get the selected account address
       const accounts = await this.web3.eth.getAccounts();
-      const selectedAddress = accounts[0];
-      console.log('Selected address:', selectedAddress);
+      this.myAddress = accounts[0];
+      console.log('Selected address:', this.myAddress);
 
       // Get the account balance
-      const balance = await this.web3.eth.getBalance(selectedAddress);
-      const etherBalance = this.web3.utils.fromWei(balance, 'ether');
-      console.log('Account balance:', etherBalance, 'ETH');
+      const balance = await this.web3.eth.getBalance(this.myAddress);
+      this.myBalance = this.web3.utils.fromWei(balance, 'ether');
 
       // Update the UI with wallet information
       const addressElement:any = document.getElementById('address');
-      addressElement.innerText = selectedAddress;
+      addressElement.innerText = this.myAddress;
 
       const balanceElement:any = document.getElementById('balance');
-      balanceElement.innerText = etherBalance + ' ETH';
+      balanceElement.innerText = this.myBalance + ' ETH';
 
 
 
@@ -74,7 +77,7 @@ export class AppComponent {
     );
 
     // Call the createContract function
-    const party1Signature = '0xe382c6fbda9a7cafb4825dd04c2d5c10055da82c1a9dfcf761f6ccaffc7b2c1b'; // Replace with the correct party1Signature bytes32 value
+    const party1Signature = '0xe382c6fbda9a7cafb4825dd04c2d5c10055da82c1a9dfcf761f6ccaffc7b2c1b';
     const gasEstimate = await this.contractFactory.methods
       .createContract(party1Signature)
       .estimateGas({ from: selectedAddress });
@@ -86,8 +89,11 @@ export class AppComponent {
         console.log('Transaction hash:', hash);
       })
       .on('receipt', (receipt: any) => {
-        console.log('Transaction receipt:', receipt);
+        console.log('Transaction receipt events:', receipt);
+        // find the value newContract in receipt.events
+        this.rideContractAddress = receipt.events.ContractCreated.returnValues.newContract;
       })
+
       .on('error', (error: Error) => {
         console.error('Error:', error);
       });
