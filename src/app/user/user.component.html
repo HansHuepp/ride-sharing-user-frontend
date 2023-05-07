@@ -1,0 +1,17 @@
+<p>Welcome User to the decentralised ride sharing platfrom</p>
+<button id="connectButton" (click)="onLoginButtonClick()">Connect to MetaMask</button>
+<div *ngIf="myAddress">
+  <p>Your MetaMask address: <span id="address"></span></p>
+  <p>Your MetaMask balance: <span id="balance"></span></p>
+</div>
+
+<div *ngIf="myAddress">
+  <button id="bookRideButton" (click)="onBookRideButtonClick()">Book Ride</button>
+</div>
+
+<div *ngIf="rideContractAddress">
+  <h3>Ride Contract Address:</h3>
+  <p>{{ rideContractAddress }}</p>
+</div>
+
+<router-outlet></router-outlet>
