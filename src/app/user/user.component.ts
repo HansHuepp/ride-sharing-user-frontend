@@ -12,7 +12,7 @@ declare let window:any;
 })
 export class UserComponent {
   web3: Web3 | undefined;
-  contractFactoryAddress = '0x41129a06B1ffbB649c90a63fD8013Fef71B157c3';
+  contractFactoryAddress = '0x131dC6d2Fa8b01f6d964c01B0360fE79d86D1CbC';
   contractFactory: Contract | undefined | any;;
 
   myAddress: string | null = null;
@@ -75,15 +75,16 @@ export class UserComponent {
       this.contractFactoryAddress,
     );
 
-    // Call the createContract function
+    // Call the createContract function with a deposit of 5 ETH
     const party1Signature = '0xe382c6fbda9a7cafb4825dd04c2d5c10055da82c1a9dfcf761f6ccaffc7b2c1b';
+    const depositInWei = this.web3.utils.toWei('5', 'ether');
     const gasEstimate = await this.contractFactory.methods
-      .createContract(party1Signature)
-      .estimateGas({ from: selectedAddress });
+      .createContract(party1Signature, depositInWei)
+      .estimateGas({ from: selectedAddress, value: depositInWei });
 
     this.contractFactory.methods
-      .createContract(party1Signature)
-      .send({ from: selectedAddress, gas: gasEstimate })
+      .createContract(party1Signature, depositInWei)
+      .send({ from: selectedAddress, gas: gasEstimate, value: depositInWei })
       .on('transactionHash', (hash: string) => {
         console.log('Transaction hash:', hash);
       })
@@ -98,4 +99,3 @@ export class UserComponent {
       });
   }
 }
-

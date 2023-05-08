@@ -24,11 +24,16 @@
 				"internalType": "bytes32",
 				"name": "_party1Signature",
 				"type": "bytes32"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_deposit",
+				"type": "uint256"
 			}
 		],
 		"name": "createContract",
 		"outputs": [],
-		"stateMutability": "nonpayable",
+		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
