@@ -12,7 +12,7 @@
 				"type": "bytes32"
 			}
 		],
-		"stateMutability": "nonpayable",
+		"stateMutability": "payable",
 		"type": "constructor"
 	},
 	{
@@ -33,6 +33,13 @@
 		],
 		"name": "UpdatePosted",
 		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "claimETH",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"inputs": [],

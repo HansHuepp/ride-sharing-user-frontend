@@ -10,4 +10,8 @@
 <button id="signRideButton" (click)="onSignRideButtonClick()">Sign Ride</button>
 </div>
 
+<div *ngIf="myAddress">
+  <button id="claimDepositButton" (click)="onClaimDepositButtonClick()">Claim Deposit</button>
+</div>
+
 <router-outlet></router-outlet>

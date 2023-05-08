@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import Web3 from 'web3';
 import  Contract from 'web3'
 import { AbiItem } from 'web3-utils';
-import contractFactoryAbi from '../abi-files/contractAbi.json' ; // Make sure to import the correct ABI JSON file
+import contractAbi from '../abi-files/contractAbi.json' ; // Make sure to import the correct ABI JSON file
 declare let window:any;
 
 @Component({
@@ -13,7 +13,7 @@ declare let window:any;
 export class RideProviderComponent {
 
   web3: Web3 | undefined;
-  contractFactory: Contract | undefined | any;;
+  contract: Contract | undefined | any;
 
   myAddress: string | null = null;
   myBalance: string | null = null;
@@ -71,18 +71,21 @@ export class RideProviderComponent {
     const selectedAddress = accounts[0];
 
     // Initialize the contract instance
-    this.contractFactory = new this.web3.eth.Contract(
-      contractFactoryAbi as AbiItem[],
+    this.contract = new this.web3.eth.Contract(
+      contractAbi as AbiItem[],
       contractID.value,
     );
 
+    const contractBalance = await this.web3.eth.getBalance(contractID.value);
+    console.log('Contract balance:', this.web3.utils.fromWei(contractBalance, 'ether'));
+    console.log('Contract balance2:', contractBalance);
     // Call the createContract function
     const party2Signature = '0x60a7c6066628a615d200e91db865c562c84685fa5817a9defd4b57694604db1b';
-    const gasEstimate = await this.contractFactory.methods
+    const gasEstimate = await this.contract.methods
       .signContract(party2Signature)
       .estimateGas({ from: selectedAddress });
 
-    this.contractFactory.methods
+    this.contract.methods
       .signContract(party2Signature)
       .send({ from: selectedAddress, gas: gasEstimate })
       .on('transactionHash', (hash: string) => {
@@ -97,6 +100,34 @@ export class RideProviderComponent {
       .on('error', (error: Error) => {
         console.error('Error:', error);
       });
+  }
+
+  async onClaimDepositButtonClick() {
+    const contractID = document.getElementById('contractID') as HTMLInputElement;
+
+    if (!this.web3) {
+      console.error('MetaMask not connected');
+      return;
+    }
+
+    const accounts = await this.web3.eth.getAccounts();
+    const selectedAddress = accounts[0];
+
+    // Initialize the contract instance
+    this.contract = new this.web3.eth.Contract(
+      contractAbi as AbiItem[],
+      contractID.value,
+    );
+
+    // Estimate gas for the claimDeposit function
+    const gasEstimate = await this.contract.methods
+      .claimETH()
+      .estimateGas({ from: selectedAddress });
+
+    // Call the claimDeposit function
+    this.contract.methods
+      .claimETH()
+      .send({ from: selectedAddress, gas: gasEstimate })
   }
 
 
