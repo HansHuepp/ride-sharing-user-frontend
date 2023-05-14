@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import Web3 from 'web3';
 import  Contract from 'web3'
 import { AbiItem } from 'web3-utils';
-import contractAbi from '../abi-files/contractAbi.json' ; // Make sure to import the correct ABI JSON file
+import contractAbi from '../abi-files/contractAbi.json' ;
 declare let window:any;
 
 @Component({
@@ -100,6 +100,124 @@ export class RideProviderComponent {
       .on('error', (error: Error) => {
         console.error('Error:', error);
       });
+  }
+
+  async setRideProviderAcceptedStatus() {
+    const contractID = document.getElementById('contractID') as HTMLInputElement;
+    const rideProviderAcceptedStatusMessage = document.getElementById('rideProviderAcceptedStatusMessage') as HTMLInputElement;
+
+    if (!this.web3) {
+      console.error('MetaMask not connected');
+      return;
+    }
+
+    const accounts = await this.web3.eth.getAccounts();
+    const selectedAddress = accounts[0];
+
+    // Initialize the contract instance
+    this.contract = new this.web3.eth.Contract(
+      contractAbi as AbiItem[],
+      contractID.value,
+    );
+
+    // Estimate gas for the setRideProviderAcceptedStatus function
+    const gasEstimate = await this.contract.methods
+      .setRideProviderAcceptedStatus(rideProviderAcceptedStatusMessage.value)
+      .estimateGas({ from: selectedAddress });
+
+    // Call the setRideProviderAcceptedStatus function
+    this.contract.methods
+      .setRideProviderAcceptedStatus(rideProviderAcceptedStatusMessage.value)
+      .send({ from: selectedAddress, gas: gasEstimate })
+  }
+
+  async setRideProviderArrviedAtPickupLocation(){
+    const contractID = document.getElementById('contractID') as HTMLInputElement;
+    const rideProviderArrviedAtPickupLocationMessage = document.getElementById('rideProviderArrviedAtPickupLocationMessage') as HTMLInputElement;
+
+    if (!this.web3) {
+      console.error('MetaMask not connected');
+      return;
+    }
+
+    const accounts = await this.web3.eth.getAccounts();
+    const selectedAddress = accounts[0];
+
+    // Initialize the contract instance
+    this.contract = new this.web3.eth.Contract(
+      contractAbi as AbiItem[],
+      contractID.value,
+    );
+
+    // Estimate gas for the setRideProviderAcceptedStatus function
+    const gasEstimate = await this.contract.methods
+      .setRideProviderArrviedAtPickupLocation(rideProviderArrviedAtPickupLocationMessage.value)
+      .estimateGas({ from: selectedAddress });
+
+    // Call the setRideProviderAcceptedStatus function
+    this.contract.methods
+      .setRideProviderArrviedAtPickupLocation(rideProviderArrviedAtPickupLocationMessage.value)
+      .send({ from: selectedAddress, gas: gasEstimate })
+  }
+
+  async setRideProviderStartedRide(){
+    const contractID = document.getElementById('contractID') as HTMLInputElement;
+    const rideProviderStartedRideMessage = document.getElementById('rideProviderStartedRideMessage') as HTMLInputElement;
+
+    if (!this.web3) {
+      console.error('MetaMask not connected');
+      return;
+    }
+
+    const accounts = await this.web3.eth.getAccounts();
+    const selectedAddress = accounts[0];
+
+    // Initialize the contract instance
+    this.contract = new this.web3.eth.Contract(
+      contractAbi as AbiItem[],
+      contractID.value,
+    );
+
+    // Estimate gas for the setRideProviderAcceptedStatus function
+    const gasEstimate = await this.contract.methods
+      .setRideProviderStartedRide(rideProviderStartedRideMessage.value)
+      .estimateGas({ from: selectedAddress });
+
+    // Call the setRideProviderAcceptedStatus function
+    this.contract.methods
+      .setRideProviderStartedRide(rideProviderStartedRideMessage.value)
+      .send({ from: selectedAddress, gas: gasEstimate })
+  }
+
+
+
+  async setRideProviderArrivedAtDropoffLocation(){
+    const contractID = document.getElementById('contractID') as HTMLInputElement;
+    const rideProviderArrivedAtDropoffLocationMessage = document.getElementById('rideProviderArrivedAtDropoffLocationMessage') as HTMLInputElement;
+
+    if (!this.web3) {
+      console.error('MetaMask not connected');
+      return;
+    }
+
+    const accounts = await this.web3.eth.getAccounts();
+    const selectedAddress = accounts[0];
+
+    // Initialize the contract instance
+    this.contract = new this.web3.eth.Contract(
+      contractAbi as AbiItem[],
+      contractID.value,
+    );
+
+    // Estimate gas for the setRideProviderAcceptedStatus function
+    const gasEstimate = await this.contract.methods
+      .setRideProviderArrivedAtDropoffLocation(rideProviderArrivedAtDropoffLocationMessage.value)
+      .estimateGas({ from: selectedAddress });
+
+    // Call the setRideProviderAcceptedStatus function
+    this.contract.methods
+      .setRideProviderArrivedAtDropoffLocation(rideProviderArrivedAtDropoffLocationMessage.value)
+      .send({ from: selectedAddress, gas: gasEstimate })
   }
 
   async onClaimDepositButtonClick() {

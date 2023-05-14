@@ -24,6 +24,11 @@
 				"internalType": "bytes32",
 				"name": "_party1Signature",
 				"type": "bytes32"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
 			}
 		],
 		"name": "createContract",

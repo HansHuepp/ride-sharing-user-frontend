@@ -11,6 +11,27 @@
 </div>
 
 <div *ngIf="myAddress">
+  <input id="rideProviderAcceptedStatusMessage" type="text" placeholder="Enter Message">
+  <button id="rideProviderAcceptedStatus" (click)="setRideProviderAcceptedStatus()">Accepted and started driving to Pick-up location</button>
+</div>
+
+<div *ngIf="myAddress">
+  <input id="rideProviderArrviedAtPickupLocationMessage" type="text" placeholder="Enter Message">
+  <button id="rideProviderArrviedAtPickupLocation" (click)="setRideProviderArrviedAtPickupLocation()">Arrived at Pickup location</button>
+</div>
+
+<div *ngIf="myAddress">
+  <input id="rideProviderStartedRideMessage" type="text" placeholder="Enter Message">
+  <button id="rideProviderStartedRide" (click)="setRideProviderStartedRide()">Starting ride with user on board</button>
+</div>
+
+<div *ngIf="myAddress">
+  <input id="rideProviderArrivedAtDropoffLocationMessage" type="text" placeholder="Enter Message">
+  <button id="rideProviderArrivedAtDropoffLocation" (click)="setRideProviderArrivedAtDropoffLocation()">Arrived at Drop-off location</button>
+</div>
+
+<div *ngIf="myAddress">
+  <p></p>
   <button id="claimDepositButton" (click)="onClaimDepositButtonClick()">Claim Deposit</button>
 </div>
 

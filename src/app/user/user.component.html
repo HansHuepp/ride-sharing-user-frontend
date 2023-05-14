@@ -6,12 +6,23 @@
 </div>
 
 <div *ngIf="myAddress">
+  <input id="rideCost" type="text" placeholder="Enter Ride Cost">
   <button id="bookRideButton" (click)="onBookRideButtonClick()">Book Ride</button>
 </div>
 
 <div *ngIf="rideContractAddress">
   <h3>Ride Contract Address:</h3>
   <p>{{ rideContractAddress }}</p>
+</div>
+
+<div *ngIf="rideContractAddress">
+  <input id="userReadyToStartRideMessage" type="text" placeholder="Enter Message">
+  <button id="userReadyToStartRide" (click)="setUserReadyToStartRide()">Entered Vehicle and ready to start ride</button>
+</div>
+
+<div *ngIf="rideContractAddress">
+  <input id="userMarkedRideCompleteMessage" type="text" placeholder="Enter Message">
+  <button id="userMarkedRideComplete" (click)="setUserMarkedRideComplete()">Ride successfully completed</button>
 </div>
 
 <router-outlet></router-outlet>
