@@ -29,6 +29,12 @@
 				"internalType": "string",
 				"name": "message",
 				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "functionName",
+				"type": "string"
 			}
 		],
 		"name": "UpdatePosted",
@@ -205,7 +211,7 @@
 				"type": "string"
 			}
 		],
-		"name": "setRideProviderArrviedAtPickupLocation",
+		"name": "setRideProviderArrivedAtPickupLocation",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

@@ -15,14 +15,27 @@
   <p>{{ rideContractAddress }}</p>
 </div>
 
-<div *ngIf="rideContractAddress">
-  <input id="userReadyToStartRideMessage" type="text" placeholder="Enter Message">
-  <button id="userReadyToStartRide" (click)="setUserReadyToStartRide()">Entered Vehicle and ready to start ride</button>
+<div *ngIf="rideProviderAcceptedStatus">
+  <h3>Status: Accepted and Driving to the Pick-up Location</h3>
 </div>
 
-<div *ngIf="rideContractAddress">
+<div *ngIf="rideProviderArrivedAtPickupLocation">
+  <input id="userReadyToStartRideMessage" type="text" placeholder="Enter Message">
+  <button id="userReadyToStartRide" (click)="setUserReadyToStartRide()">Entered Vehicle and ready to start</button>
+</div>
+
+<div *ngIf="rideProviderStartedRide">
+  <h3>Ride Status: Starting the Ride to your Drop-of Location</h3>
+</div>
+
+<div *ngIf="rideProviderArrivedAtDropoffLocation">
+  <h3>Ride Status: We arrived at your destination</h3>
+</div>
+
+<div *ngIf="rideProviderArrivedAtDropoffLocation">
   <input id="userMarkedRideCompleteMessage" type="text" placeholder="Enter Message">
   <button id="userMarkedRideComplete" (click)="setUserMarkedRideComplete()">Ride successfully completed</button>
 </div>
+
 
 <router-outlet></router-outlet>

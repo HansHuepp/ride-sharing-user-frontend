@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import Web3 from 'web3';
 import  Contract from 'web3'
 import { AbiItem } from 'web3-utils';
@@ -12,13 +12,23 @@ declare let window:any;
   styleUrls: ['./user.component.css']
 })
 export class UserComponent {
+
+  constructor(private cdr: ChangeDetectorRef) {
+  }
   web3: Web3 | undefined;
-  contractFactoryAddress = '0xC1F3a2dfa938f5486dEE4B80E49352A660969592';
-  contractFactory: Contract | undefined | any;;
+  contractFactoryAddress = '0xC3250dB2106a6b7dc2Dc02D461039b4925E508F2';
+  contractFactory: Contract | undefined | any;
 
   myAddress: string | null = null;
   myBalance: string | null = null;
   rideContractAddress: string | null | any= null;
+  rideContract: Contract | undefined | any;
+
+  rideProviderAcceptedStatus: boolean | null = false;
+  rideProviderArrivedAtPickupLocation: boolean = false;
+  rideProviderStartedRide: boolean = false;
+  rideProviderArrivedAtDropoffLocation: boolean = false;
+  rideProviderCanceldRide: boolean = false;
 
   async connectMetaMask() {
     if (typeof window.ethereum === 'undefined') {
@@ -95,6 +105,11 @@ export class UserComponent {
         // find the value newContract in receipt.events
         this.rideContractAddress = receipt.events.ContractCreated.returnValues.newContract;
         console.log('Ride Contract Address:', this.rideContractAddress);
+
+        // Start listening for updates
+        console.log('Start listening for updates');
+        this.listenForUpdates();
+
       })
 
       .on('error', (error: Error) => {
@@ -176,5 +191,48 @@ export class UserComponent {
         console.error('Error:', error);
       });
   }
+
+  async listenForUpdates() {
+    if (!this.web3 || !this.rideContractAddress) {
+      console.error('MetaMask not connected or ride contract address not set');
+      return;
+    }
+
+    // Initialize the contract instance
+    const contractInstance = new this.web3.eth.Contract(
+      contractAbi as AbiItem[],
+      this.rideContractAddress,
+    );
+
+    // Listen for UpdatePosted events
+    contractInstance.events.allEvents()
+    .on('data', (event: any) => {
+      const functionName = event.returnValues.functionName;
+      console.log("Function Name: ", functionName);
+
+      if(functionName == "rideProviderAcceptedStatus"){
+        this.rideProviderAcceptedStatus = true;
+        this.cdr.detectChanges();
+      }
+
+      if(functionName == "rideProviderArrivedAtPickupLocation"){
+        this.rideProviderArrivedAtPickupLocation = true;
+        this.cdr.detectChanges();
+      }
+
+      if(functionName == "rideProviderStartedRide"){
+        this.rideProviderStartedRide = true;
+        this.cdr.detectChanges();
+      }
+
+      if(functionName == "rideProviderArrivedAtDropoffLocation"){
+        this.rideProviderArrivedAtDropoffLocation = true;
+        this.cdr.detectChanges();
+      }
+
+    })
+    .on('error', console.error);
+  }
+
 
 }

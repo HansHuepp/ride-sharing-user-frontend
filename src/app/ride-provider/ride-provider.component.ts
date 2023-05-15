@@ -19,6 +19,10 @@ export class RideProviderComponent {
   myBalance: string | null = null;
   rideContractAddress: string | null = null;
 
+  userReadyToStartRid: boolean = false;
+  userMarkedRideComplete: boolean = false;
+  userCanceldRide: boolean = false;
+
   async connectMetaMask() {
     if (typeof window.ethereum === 'undefined') {
       alert('Please install MetaMask or another Ethereum wallet extension.');
@@ -95,6 +99,7 @@ export class RideProviderComponent {
         console.log('Transaction receipt events:', receipt);
         // find the value newContract in receipt.events
         this.rideContractAddress = receipt.events.ContractCreated.returnValues.newContract;
+        this.listenForUpdates();
       })
 
       .on('error', (error: Error) => {
@@ -131,9 +136,9 @@ export class RideProviderComponent {
       .send({ from: selectedAddress, gas: gasEstimate })
   }
 
-  async setRideProviderArrviedAtPickupLocation(){
+  async setRideProviderArrivedAtPickupLocation(){
     const contractID = document.getElementById('contractID') as HTMLInputElement;
-    const rideProviderArrviedAtPickupLocationMessage = document.getElementById('rideProviderArrviedAtPickupLocationMessage') as HTMLInputElement;
+    const rideProviderArrivedAtPickupLocationMessage = document.getElementById('rideProviderArrivedAtPickupLocationMessage') as HTMLInputElement;
 
     if (!this.web3) {
       console.error('MetaMask not connected');
@@ -151,12 +156,12 @@ export class RideProviderComponent {
 
     // Estimate gas for the setRideProviderAcceptedStatus function
     const gasEstimate = await this.contract.methods
-      .setRideProviderArrviedAtPickupLocation(rideProviderArrviedAtPickupLocationMessage.value)
+      .setRideProviderArrivedAtPickupLocation(rideProviderArrivedAtPickupLocationMessage.value)
       .estimateGas({ from: selectedAddress });
 
     // Call the setRideProviderAcceptedStatus function
     this.contract.methods
-      .setRideProviderArrviedAtPickupLocation(rideProviderArrviedAtPickupLocationMessage.value)
+      .setRideProviderArrivedAtPickupLocation(rideProviderArrivedAtPickupLocationMessage.value)
       .send({ from: selectedAddress, gas: gasEstimate })
   }
 
@@ -246,6 +251,27 @@ export class RideProviderComponent {
     this.contract.methods
       .claimETH()
       .send({ from: selectedAddress, gas: gasEstimate })
+  }
+
+  async listenForUpdates() {
+    if (!this.web3 || !this.rideContractAddress) {
+      console.error('MetaMask not connected or ride contract address not set');
+      return;
+    }
+
+    // Initialize the contract instance
+    const contractInstance = new this.web3.eth.Contract(
+      contractAbi as AbiItem[],
+      this.rideContractAddress,
+    );
+
+    // Listen for UpdatePosted events
+    contractInstance.events.allEvents()
+    .on('data', (event: any) => {
+      const functionName = event.returnValues.functionName;
+      console.log("Function Name: ", functionName);
+    })
+    .on('error', console.error);
   }
 
 
