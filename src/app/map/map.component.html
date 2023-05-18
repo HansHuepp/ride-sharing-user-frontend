@@ -1,13 +1,26 @@
+<div class="header">
+  <p class="logo">G E T A C A R</p>
+  <div class="wallet-container">
+    <i class="mdi mdi-wallet-bifold-outline"></i>
+  </div>
+</div>
+
 <div id='map'></div>
 
-<div>
+<div *ngIf="!routeFound">
   <input type="text" [(ngModel)]="pickupLocation" placeholder="Enter Pickup Location"/>
   <input type="text" [(ngModel)]="dropoffLocation" placeholder="Enter Dropoff Location"/>
-  <button (click)="displayRoute()">Display Route</button>
-</div>
-
-<div class="logo-container">
-  <p class="logo" [innerHTML]="rideDistanceAndDurcationString"></p>
+  <button (click)="displayRoute()">Find Route</button>
 </div>
 
 
+<div *ngIf="routeFound">
+  <div class="logo-container">
+    <p class="logo" [innerHTML]="rideDistanceAndDurcationString"></p>
+    <p class="logo" [innerHTML]="rideCostString"></p>
+  </div>
+  <button (click)="displayRoute()">Find Ride</button>
+  <button (click)="routeFoundSwitch()">Back</button>
+</div>
+
+<p class="footer">by Hans Hüppelshäuser</p>

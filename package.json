@@ -19,6 +19,7 @@
     "@angular/platform-browser-dynamic": "^16.0.0",
     "@angular/router": "^16.0.0",
     "@mapbox/mapbox-gl-geocoder": "^5.0.1",
+    "@mdi/font": "^7.2.96",
     "@types/mapbox-gl": "^2.7.11",
     "mapbox-gl": "^2.14.1",
     "rxjs": "~7.8.0",

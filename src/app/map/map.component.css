@@ -6,6 +6,26 @@
   border-color: #000000;
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wallet-container {
+  border-color: #000000;
+  width: 50px;
+  border-radius: 5px;
+  border: 1px solid;
+  background-color: #FFD95A;
+}
+
+.mdi-wallet-bifold-outline {
+  /* Adjust as necessary */
+  font-size: 1.8em;
+  margin-right: 10px;
+}
+
 body {
   font-family: Arial, sans-serif;
   color: #333;
@@ -20,6 +40,24 @@ body {
 
 .logo-container {
   margin-bottom: 50px;
+  text-align: center;
+}
+
+.footer-container {
+  position: relative;
+  height: 300px;  /* Change as needed */
+  width: 300px;   /* Change as needed */
+  border: 1px solid #000;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.5em;
+  font-family: 'DotGothic16';
+  color: #4C3D3D;
   text-align: center;
 }
 

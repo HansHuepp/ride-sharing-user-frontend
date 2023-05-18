@@ -17,6 +17,8 @@ export class MapComponent implements OnInit {
   rideDistance: number | any;
   rideDuration: number | any;
   rideDistanceAndDurcationString: string | any;
+  rideCostString: string | any;
+  routeFound: boolean = false;
 
   constructor() { }
 
@@ -31,7 +33,7 @@ export class MapComponent implements OnInit {
     this.map = new mapboxgl.Map({
       container: 'map',
       style: this.style,
-      zoom: 13,
+      zoom: 14,
       center: [this.lng, this.lat]
     });
 
@@ -63,6 +65,10 @@ export class MapComponent implements OnInit {
 
         this.rideDistanceAndDurcationString = `Durration: ${this.rideDuration} min / ${this.rideDistance} km`;
 
+        let rideCost = this.rideDistance * 1.5;
+        rideCost = Math.round(rideCost * 100) / 100;
+        this.rideCostString = `Est. max. Cost: ${rideCost} €`;
+
         // Add a new source and layer to the map for the route
         this.map.addSource('route', {
           'type': 'geojson',
@@ -88,6 +94,7 @@ export class MapComponent implements OnInit {
         bounds.extend(pickup);
         bounds.extend(dropoff);
         this.map.fitBounds(bounds, { padding: 50 }); // 50 pixel padding around the bounds
+        this.routeFoundSwitch();
       })
       .catch(error => console.error('Error:', error));
   }
@@ -98,5 +105,9 @@ export class MapComponent implements OnInit {
     const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${mapboxgl.accessToken}`);
     const data = await response.json();
     return data.features[0].center;
+  }
+
+  routeFoundSwitch() {
+    this.routeFound = !this.routeFound;
   }
 }
