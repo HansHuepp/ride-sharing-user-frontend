@@ -36,6 +36,7 @@ export class UserLoginComponent {
       mapboxgl: mapboxgl,
       marker: true,
       placeholder: 'Enter pickup location'
+
     });
     if (pickupElement) {
       pickupElement.appendChild(pickupGeocoder.onAdd(map));

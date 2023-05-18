@@ -12,7 +12,7 @@ export class WelcomeComponent {
     // Implement your login functionality here
     console.log('Login button clicked');
     // Navigate to localhost:4200/user
-    this.router.navigate(['/user']);
+    this.router.navigate(['/map']);
 
 
   }

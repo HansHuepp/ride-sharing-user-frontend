@@ -9,11 +9,14 @@ import * as mapboxgl from 'mapbox-gl';
 export class MapComponent implements OnInit {
 
   map: mapboxgl.Map |any;
-  style = 'mapbox://styles/mapbox/streets-v11';
-  lat = 37.7749;
-  lng = -122.4194;
+  style = 'mapbox://styles/mapbox/navigation-day-v1';
+  lat = 48.744808;
+  lng = 9.107820;
   pickupLocation: string | any  ;
   dropoffLocation: string | any ; //lat and long of San Francisco
+  rideDistance: number | any;
+  rideDuration: number | any;
+  rideDistanceAndDurcationString: string | any;
 
   constructor() { }
 
@@ -52,6 +55,13 @@ export class MapComponent implements OnInit {
       .then(response => response.json())
       .then(data => {
         const route = data.routes[0].geometry;
+        this.rideDistance = data.routes[0].distance / 1000; // Convert from meters to kilometers
+        this.rideDistance = Math.round(this.rideDistance * 10) / 10;
+
+        this.rideDuration = data.routes[0].duration / 60; // Convert from seconds to minutes
+        this.rideDuration = Math.round(this.rideDuration);
+
+        this.rideDistanceAndDurcationString = `Durration: ${this.rideDuration} min / ${this.rideDistance} km`;
 
         // Add a new source and layer to the map for the route
         this.map.addSource('route', {
