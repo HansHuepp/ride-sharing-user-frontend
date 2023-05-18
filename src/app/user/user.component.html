@@ -1,18 +1,19 @@
-<p>Welcome User to the decentralised ride sharing platfrom</p>
+<h4>Welcome User to the decentralised ride sharing platfrom</h4>
 <button id="connectButton" (click)="onLoginButtonClick()">Connect to MetaMask</button>
 <div *ngIf="myAddress">
   <p>Your MetaMask address: <span id="address"></span></p>
   <p>Your MetaMask balance: <span id="balance"></span></p>
 </div>
 
-<div *ngIf="myAddress">
+<div *ngIf="myAddress && rideContractAddress == null">
   <input id="rideCost" type="text" placeholder="Enter Ride Cost">
   <button id="bookRideButton" (click)="onBookRideButtonClick()">Book Ride</button>
 </div>
 
-<div *ngIf="rideContractAddress">
+<div *ngIf="rideContractAddress && rideProviderAcceptedStatus == false && rideProviderArrivedAtPickupLocation == false && rideProviderStartedRide == false && rideProviderArrivedAtDropoffLocation== false ">
   <h3>Ride Contract Address:</h3>
-  <p>{{ rideContractAddress }}</p>
+  <p>{{ rideContractAddress }} <button (click)="copyAddress()" id="copyButton">Copy</button></p>
+
 </div>
 
 <div *ngIf="rideProviderAcceptedStatus">
@@ -21,7 +22,7 @@
 
 <div *ngIf="rideProviderArrivedAtPickupLocation">
   <input id="userReadyToStartRideMessage" type="text" placeholder="Enter Message">
-  <button id="userReadyToStartRide" (click)="setUserReadyToStartRide()">Entered Vehicle and ready to start</button>
+  <button id="userReadyToStartRide" (click)="setUserReadyToStartRide()">Entered Vehicle and Ready to Start</button>
 </div>
 
 <div *ngIf="rideProviderStartedRide">
@@ -29,7 +30,7 @@
 </div>
 
 <div *ngIf="rideProviderArrivedAtDropoffLocation">
-  <h3>Ride Status: We arrived at your destination</h3>
+  <h3>Ride Status: We arrived at your Destination</h3>
 </div>
 
 <div *ngIf="rideProviderArrivedAtDropoffLocation">

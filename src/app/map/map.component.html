@@ -1,0 +1,8 @@
+<div>
+  <input [(ngModel)]="pickupLocation" placeholder="Enter Pickup Location"/>
+  <input [(ngModel)]="dropoffLocation" placeholder="Enter Dropoff Location"/>
+  <button (click)="displayRoute()">Display Route</button>
+  <button (click)="getCoordinates('Schlossplatz Stuttgart')">Get GPS</button>
+</div>
+<div id='map' style='width: 400px; height: 300px;'></div>
+

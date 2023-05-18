@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-welcome',
@@ -6,9 +7,14 @@ import { Component } from '@angular/core';
   styleUrls: ['./welcome.component.css']
 })
 export class WelcomeComponent {
+  constructor(private router: Router) {}
   login() {
     // Implement your login functionality here
     console.log('Login button clicked');
+    // Navigate to localhost:4200/user
+    this.router.navigate(['/user']);
+
+
   }
 
 }

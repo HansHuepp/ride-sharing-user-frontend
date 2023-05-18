@@ -4,12 +4,14 @@ import { RideProviderComponent } from './ride-provider/ride-provider.component';
 import { UserComponent } from './user/user.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { UserLoginComponent } from './user-login/user-login.component';
+import { MapComponent } from './map/map.component';
 
 const routes: Routes = [
   { path: 'ride-provider',  component: RideProviderComponent },
   { path: 'user',           component: UserComponent },
   { path: 'login',          component: UserLoginComponent },
-  { path: '',               component: WelcomeComponent }
+  { path: '',               component: WelcomeComponent },
+  { path: 'map',            component: MapComponent }
 ];
 
 @NgModule({

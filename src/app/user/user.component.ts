@@ -30,6 +30,15 @@ export class UserComponent {
   rideProviderArrivedAtDropoffLocation: boolean = false;
   rideProviderCanceldRide: boolean = false;
 
+  async copyAddress() {
+    try {
+      await navigator.clipboard.writeText(this.rideContractAddress);
+      // Optionally, show a notification or message that copying was successful
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  }
+
   async connectMetaMask() {
     if (typeof window.ethereum === 'undefined') {
       alert('Please install MetaMask or another Ethereum wallet extension.');
@@ -156,7 +165,7 @@ export class UserComponent {
 
   }
   async setUserMarkedRideComplete(){
-    const userMarkedRideCompleteMessage = document.getElementById('userReadyToStartRideMessage') as HTMLInputElement;
+    const userMarkedRideCompleteMessage = document.getElementById('userMarkedRideCompleteMessage') as HTMLInputElement;
 
     if (!this.web3) {
       console.error('MetaMask not connected');
@@ -216,16 +225,19 @@ export class UserComponent {
       }
 
       if(functionName == "rideProviderArrivedAtPickupLocation"){
+        this.rideProviderAcceptedStatus = false;
         this.rideProviderArrivedAtPickupLocation = true;
         this.cdr.detectChanges();
       }
 
       if(functionName == "rideProviderStartedRide"){
+        this.rideProviderArrivedAtPickupLocation = false;
         this.rideProviderStartedRide = true;
         this.cdr.detectChanges();
       }
 
       if(functionName == "rideProviderArrivedAtDropoffLocation"){
+        this.rideProviderStartedRide = false;
         this.rideProviderArrivedAtDropoffLocation = true;
         this.cdr.detectChanges();
       }
