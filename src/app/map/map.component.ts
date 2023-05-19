@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl';
+import { SharedService } from '../services/shared.service';
+import { share } from 'rxjs';
 
 @Component({
   selector: 'app-map',
@@ -14,19 +16,38 @@ export class MapComponent implements OnInit {
   lng = 9.107820;
   pickupLocation: string | any  ;
   dropoffLocation: string | any ; //lat and long of San Francisco
-  rideDistance: number | any;
-  rideDuration: number | any;
   rideDistanceAndDurcationString: string | any;
-  rideCostString: string | any;
   routeFound: boolean = false;
 
-  constructor() { }
+  pickupLocationCoordinates: [number, number] | any;
+  dropoffLocationCoordinates: [number, number] | any;
+  rideCost: string | any;
+  rideDistance: number | any;
+  rideDuration: number | any;
+
+  constructor(private sharedService: SharedService) { }
 
   ngOnInit() {
     // Set mapbox access token
     (mapboxgl as any).accessToken = 'pk.eyJ1IjoiaGFuc2h1ZXBwIiwiYSI6ImNsaGx6YWhodjE2bTAzam54MXUyeDVoMnoifQ.t0d6PapiyCFDLYX3uAyYiw';
 
     this.initializeMap();
+
+    this.sharedService.getPickupLocationCoordinates().subscribe(value => {
+      this.pickupLocationCoordinates = value;
+    });
+    this.sharedService.getDropoffLocationCoordinates().subscribe(value => {
+      this.dropoffLocationCoordinates = value;
+    });
+    this.sharedService.getRideCost().subscribe(value => {
+      this.rideCost = value;
+    });
+    this.sharedService.getRideDistance().subscribe(value => {
+      this.rideDistance = value;
+    });
+    this.sharedService.getRideDuration().subscribe(value => {
+      this.rideDuration = value;
+    });
   }
 
   initializeMap() {
@@ -52,22 +73,29 @@ export class MapComponent implements OnInit {
     const pickup = await this.getCoordinates(this.pickupLocation);
     const dropoff = await this.getCoordinates(this.dropoffLocation);
 
+    this.sharedService.updatePickupLocationCoordinates(pickup);
+    this.sharedService.updateDropoffLocationCoordinates(dropoff);
+
     // Fetch route from Mapbox Directions API
     fetch(`https://api.mapbox.com/directions/v5/mapbox/driving/${pickup[0]},${pickup[1]};${dropoff[0]},${dropoff[1]}?geometries=geojson&access_token=${mapboxgl.accessToken}`)
       .then(response => response.json())
       .then(data => {
         const route = data.routes[0].geometry;
-        this.rideDistance = data.routes[0].distance / 1000; // Convert from meters to kilometers
-        this.rideDistance = Math.round(this.rideDistance * 10) / 10;
+        let myRideDistance = data.routes[0].distance / 1000; // Convert from meters to kilometers
+        myRideDistance = Math.round(myRideDistance * 10) / 10;
+        this.sharedService.updateRideDistance(myRideDistance);
 
-        this.rideDuration = data.routes[0].duration / 60; // Convert from seconds to minutes
-        this.rideDuration = Math.round(this.rideDuration);
+        let myRideDuration = data.routes[0].duration / 60; // Convert from seconds to minutes
+        myRideDuration = Math.round(myRideDuration * 10) / 10;
+        this.sharedService.updateRideDuration(myRideDuration);
 
         this.rideDistanceAndDurcationString = `Durration: ${this.rideDuration} min / ${this.rideDistance} km`;
 
-        let rideCost = this.rideDistance * 1.5;
-        rideCost = Math.round(rideCost * 100) / 100;
-        this.rideCostString = `Est. max. Cost: ${rideCost} €`;
+
+        let myRideCost = this.rideDistance * 1.5;
+        myRideCost = Math.round(myRideCost * 100) / 100;
+        this.sharedService.updateRideCost(myRideCost.toString());
+        this.rideCost = `Est. max. Cost: ${this.rideCost} €`;
 
         // Add a new source and layer to the map for the route
         this.map.addSource('route', {

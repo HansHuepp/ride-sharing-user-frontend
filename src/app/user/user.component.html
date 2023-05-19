@@ -1,9 +1,4 @@
-<h4>Welcome to Getacar the decentralised ride sharing platfrom</h4>
-<button id="connectButton" (click)="onLoginButtonClick()">Connect to MetaMask</button>
-<div *ngIf="myAddress">
-  <p>Your MetaMask address: <span id="address"></span></p>
-  <p>Your MetaMask balance: <span id="balance"></span></p>
-</div>
+<app-header></app-header>
 
 <div *ngIf="myAddress && rideContractAddress == null">
   <input id="rideCost" type="text" placeholder="Enter Ride Cost">
@@ -38,5 +33,5 @@
   <button id="userMarkedRideComplete" (click)="setUserMarkedRideComplete()">Ride successfully completed</button>
 </div>
 
-
+<app-footer></app-footer>
 <router-outlet></router-outlet>

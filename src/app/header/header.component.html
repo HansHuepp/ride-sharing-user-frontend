@@ -1,0 +1,16 @@
+<div class="header">
+  <p class="logo">G E T A C A R</p>
+  <div class="wallet-container" (click)="toggleBurgerMenu()">
+    <i class="mdi mdi-wallet-bifold-outline"></i>
+  </div>
+</div>
+
+<!-- Burger Menu -->
+<div class="burger-menu" *ngIf="showBurgerMenu">
+  <!-- Menu items go here -->
+  <a *ngIf="myAddress">Wallet ID: <span [innerHTML]="myAddressShort"></span></a>
+  <a class="burger-menu-border-bottom" *ngIf="myAddress">Balance: <span [innerHTML]="myBalance"></span> €</a>
+  <a class="burger-menu-border-bottom" *ngIf="!myAddress" (click)="connectMetaMask()">Connect Wallet</a>
+  <a class="burger-menu-border-bottom">Settings</a>
+</div>
+

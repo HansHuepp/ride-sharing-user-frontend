@@ -4,6 +4,7 @@ import  Contract from 'web3'
 import { AbiItem } from 'web3-utils';
 import contractFactoryAbi from '../abi-files/contractFactoryAbi.json' ;
 import contractAbi from '../abi-files/contractAbi.json' ;
+import { SharedService } from '../services/shared.service';
 declare let window:any;
 
 @Component({
@@ -13,14 +14,15 @@ declare let window:any;
 })
 export class UserComponent {
 
-  constructor(private cdr: ChangeDetectorRef) {
-  }
-  web3: Web3 | undefined;
+  constructor(private cdr: ChangeDetectorRef, private sharedService: SharedService) { }
+
+  web3: Web3 | undefined | null;
+  myAddress: string  = "";
+  myBalance: string  = "";
+
   contractFactoryAddress = '0xC3250dB2106a6b7dc2Dc02D461039b4925E508F2';
   contractFactory: Contract | undefined | any;
 
-  myAddress: string | null = null;
-  myBalance: string | null = null;
   rideContractAddress: string | null | any= null;
   rideContract: Contract | undefined | any;
 
@@ -30,6 +32,18 @@ export class UserComponent {
   rideProviderArrivedAtDropoffLocation: boolean = false;
   rideProviderCanceldRide: boolean = false;
 
+  ngOnInit() {
+    this.sharedService.getMyAddress().subscribe(value => {
+      this.myAddress = value;
+    });
+    this.sharedService.getMyBalance().subscribe(value => {
+      this.myBalance = value;
+    });
+    this.sharedService.getWeb3().subscribe(value => {
+      this.web3 = value;
+    });
+  }
+
   async copyAddress() {
     try {
       await navigator.clipboard.writeText(this.rideContractAddress);
@@ -37,47 +51,6 @@ export class UserComponent {
     } catch (err) {
       console.error('Failed to copy text: ', err);
     }
-  }
-
-  async connectMetaMask() {
-    if (typeof window.ethereum === 'undefined') {
-      alert('Please install MetaMask or another Ethereum wallet extension.');
-      return;
-    }
-
-    try {
-      await window.ethereum.request({ method: 'eth_requestAccounts' });
-      this.web3 = new Web3(window.ethereum);
-      console.log('MetaMask connected');
-
-      // Get the selected account address
-      const accounts = await this.web3.eth.getAccounts();
-      this.myAddress = accounts[0];
-      console.log('Selected address:', this.myAddress);
-
-      // Get the account balance
-      const balance = await this.web3.eth.getBalance(this.myAddress);
-      this.myBalance = this.web3.utils.fromWei(balance, 'ether');
-
-      // Update the UI with wallet information
-      const addressElement:any = document.getElementById('address');
-      addressElement.innerText = this.myAddress;
-
-      const balanceElement:any = document.getElementById('balance');
-      balanceElement.innerText = this.myBalance + ' ETH';
-
-
-
-    } catch (error) {
-      console.error('Error connecting to MetaMask:', error);
-      alert('Error connecting to MetaMask. Please check the console for details.');
-    }
-  }
-
-
-  onLoginButtonClick() {
-    console.log('Button clicked!');
-    this.connectMetaMask();
   }
 
   async onBookRideButtonClick() {

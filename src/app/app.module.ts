@@ -10,6 +10,8 @@ import { WelcomeComponent } from './welcome/welcome.component';
 import { UserLoginComponent } from './user-login/user-login.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MapComponent } from './map/map.component';
+import { HeaderComponent } from './header/header.component';
+import { FooterComponent } from './footer/footer.component';
 
 
 @NgModule({
@@ -20,6 +22,8 @@ import { MapComponent } from './map/map.component';
     WelcomeComponent,
     UserLoginComponent,
     MapComponent,
+    HeaderComponent,
+    FooterComponent,
 
   ],
   imports: [
