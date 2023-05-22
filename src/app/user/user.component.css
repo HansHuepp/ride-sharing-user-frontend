@@ -6,15 +6,17 @@ body {
 
 button {
   font-size: 1em;
+  width: 100%;
   padding: 10px 20px;
   color: #4C3D3D;
   background-color: #FFD95A;
   font-family: 'Poppins';
   border: none;
-  border-radius: 5px;
+  border-radius: 7px;
   cursor: pointer;
   transition: background-color 0.3s ease;
   margin: 10px 0;
+  margin-top: 300px;
 }
 
 button:hover {
@@ -78,3 +80,19 @@ h4 {
   background-color: #C07F00;
 }
 
+.center-text {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 80px;
+}
+
+.center  {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 120px;
+}
+
+.cancel-button {
+  position: relative;
+  bottom: 1px;
+}

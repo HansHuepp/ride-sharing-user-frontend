@@ -8,13 +8,11 @@ import { Router } from '@angular/router';
 })
 export class WelcomeComponent {
   constructor(private router: Router) {}
-  login() {
+  start() {
     // Implement your login functionality here
     console.log('Login button clicked');
     // Navigate to localhost:4200/user
     this.router.navigate(['/map']);
-
-
   }
 
 }

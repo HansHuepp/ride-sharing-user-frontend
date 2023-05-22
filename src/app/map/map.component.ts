@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl';
 import { SharedService } from '../services/shared.service';
-import { share } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-map',
@@ -25,7 +25,7 @@ export class MapComponent implements OnInit {
   rideDistance: number | any;
   rideDuration: number | any;
 
-  constructor(private sharedService: SharedService) { }
+  constructor(private sharedService: SharedService, private router: Router) { }
 
   ngOnInit() {
     // Set mapbox access token
@@ -137,5 +137,35 @@ export class MapComponent implements OnInit {
 
   routeFoundSwitch() {
     this.routeFound = !this.routeFound;
+  }
+
+  async findRide(pickupLocation: string, dropoffLocation: string): Promise<any> {
+    console.log("searching for ride");
+    const response = await fetch('https://localhost:3000/findRide', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ pickupLocation, dropoffLocation })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    console.log("Response: ", response);
+    return await response.json();
+  }
+
+  async startBooking() {
+    // Implement your login functionality here
+    console.log('Login button clicked');
+    this.router.navigate(['/booking']);
+
+    //await this.findRide('Location 1', 'Location 2')
+    //.then(
+    //  data => console.log(data)
+    //)
+    //.catch(error => console.error(error));
   }
 }

@@ -12,6 +12,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MapComponent } from './map/map.component';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
+import { LoadingComponent } from './loading/loading.component';
 
 
 @NgModule({
@@ -24,6 +25,7 @@ import { FooterComponent } from './footer/footer.component';
     MapComponent,
     HeaderComponent,
     FooterComponent,
+    LoadingComponent,
 
   ],
   imports: [

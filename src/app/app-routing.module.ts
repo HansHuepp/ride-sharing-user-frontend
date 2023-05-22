@@ -8,7 +8,7 @@ import { MapComponent } from './map/map.component';
 
 const routes: Routes = [
   { path: 'ride-provider',  component: RideProviderComponent },
-  { path: 'user',           component: UserComponent },
+  { path: 'booking',           component: UserComponent },
   { path: 'login',          component: UserLoginComponent },
   { path: '',               component: WelcomeComponent },
   { path: 'map',            component: MapComponent }

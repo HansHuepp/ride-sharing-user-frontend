@@ -5,6 +5,7 @@ import { AbiItem } from 'web3-utils';
 import contractFactoryAbi from '../abi-files/contractFactoryAbi.json' ;
 import contractAbi from '../abi-files/contractAbi.json' ;
 import { SharedService } from '../services/shared.service';
+import { Router } from '@angular/router';
 declare let window:any;
 
 @Component({
@@ -14,7 +15,10 @@ declare let window:any;
 })
 export class UserComponent {
 
-  constructor(private cdr: ChangeDetectorRef, private sharedService: SharedService) { }
+  constructor(private cdr: ChangeDetectorRef, private sharedService: SharedService, private router: Router) { }
+
+
+
 
   web3: Web3 | undefined | null;
   myAddress: string  = "";
@@ -218,6 +222,15 @@ export class UserComponent {
     })
     .on('error', console.error);
   }
+
+  cancelBooking() {
+    // Implement your login functionality here
+    console.log('Login button clicked');
+    // Navigate to localhost:4200/user
+    this.router.navigate(['/map']);
+  }
+
+
 
 
 }

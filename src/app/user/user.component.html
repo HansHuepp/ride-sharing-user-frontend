@@ -1,4 +1,8 @@
 <app-header></app-header>
+<h3 class="center-text">Finding your perfect ride...</h3>
+<div class="center"> <app-loading></app-loading> </div>
+
+<button class="cancel-button" (click)="cancelBooking()">Cancel</button>
 
 <div *ngIf="myAddress && rideContractAddress == null">
   <input id="rideCost" type="text" placeholder="Enter Ride Cost">
