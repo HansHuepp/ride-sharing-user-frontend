@@ -8,6 +8,7 @@ import Web3 from 'web3';
 export class SharedService {
 
   private myAddress = new BehaviorSubject<string>("");
+  private myAddressShort = new BehaviorSubject<string>("");
   private myBalance = new BehaviorSubject<string>("");
   private web3 = new BehaviorSubject<Web3 | null>(null);
 
@@ -16,6 +17,8 @@ export class SharedService {
   private rideCost = new BehaviorSubject<string>("");
   private rideDistance = new BehaviorSubject<number | null>(null);
   private rideDuration = new BehaviorSubject<number | null>(null);
+
+  private auctionResult = new BehaviorSubject<string>("");
 
   getPickupLocationCoordinates() {
     return this.pickupLocationCoordinates.asObservable();
@@ -65,6 +68,14 @@ export class SharedService {
     this.myAddress.next(newValue);
   }
 
+  getMyAddressShort() {
+    return this.myAddressShort.asObservable();
+  }
+
+  updateMyAddressShort(newValue: string) {
+    this.myAddressShort.next(newValue);
+  }
+
   getMyBalance() {
     return this.myBalance.asObservable();
   }
@@ -79,6 +90,14 @@ export class SharedService {
 
   updateWeb3(newValue: Web3) {
     this.web3.next(newValue);
+  }
+
+  getAuctionResult() {
+    return this.auctionResult.asObservable();
+  }
+
+  updateAuctionResult(newValue: string) {
+    this.auctionResult.next(newValue);
   }
 
 }

@@ -9,11 +9,11 @@ import { Router } from '@angular/router';
 declare let window:any;
 
 @Component({
-  selector: 'app-user',
-  templateUrl: './user.component.html',
-  styleUrls: ['./user.component.css']
+  selector: 'app-booking',
+  templateUrl: './booking.component.html',
+  styleUrls: ['./booking.component.css']
 })
-export class UserComponent {
+export class BookingComponent {
 
   constructor(private cdr: ChangeDetectorRef, private sharedService: SharedService, private router: Router) { }
 
@@ -30,13 +30,16 @@ export class UserComponent {
   rideContractAddress: string | null | any= null;
   rideContract: Contract | undefined | any;
 
+  rideSearchFoundStatus: boolean = false;
   rideProviderAcceptedStatus: boolean | null = false;
   rideProviderArrivedAtPickupLocation: boolean = false;
   rideProviderStartedRide: boolean = false;
   rideProviderArrivedAtDropoffLocation: boolean = false;
   rideProviderCanceldRide: boolean = false;
+  auctionResult: string = "";
 
-  ngOnInit() {
+  async ngOnInit() {
+    console.log(this.rideContractAddress);
     this.sharedService.getMyAddress().subscribe(value => {
       this.myAddress = value;
     });
@@ -46,6 +49,20 @@ export class UserComponent {
     this.sharedService.getWeb3().subscribe(value => {
       this.web3 = value;
     });
+    this.sharedService.getAuctionResult().subscribe(value => {
+      this.auctionResult = value;
+    });
+
+    //call find dummy after 5 seconds
+    setTimeout(() => {
+      this.findRideDummy();
+    }
+    , 5000);
+  }
+
+  findRideDummy() {
+      this.rideSearchFoundStatus = true;
+      this.cdr.detectChanges();
   }
 
   async copyAddress() {
@@ -57,8 +74,7 @@ export class UserComponent {
     }
   }
 
-  async onBookRideButtonClick() {
-    const rideCost = document.getElementById('rideCost') as HTMLInputElement;
+  async bookRide() {
 
     if (!this.web3) {
       console.error('MetaMask not connected');
@@ -77,12 +93,12 @@ export class UserComponent {
     // Call the createContract function
     const party1Signature = '0xe382c6fbda9a7cafb4825dd04c2d5c10055da82c1a9dfcf761f6ccaffc7b2c1b';
     const gasEstimate = await this.contractFactory.methods
-      .createContract(party1Signature, this.web3.utils.toWei(rideCost.value.toString(), 'ether'))
-      .estimateGas({ from: selectedAddress, value: this.web3.utils.toWei(rideCost.value.toString(), 'ether') });
+      .createContract(party1Signature, this.web3.utils.toWei(this.auctionResult.toString(), 'ether'))
+      .estimateGas({ from: selectedAddress, value: this.web3.utils.toWei(this.auctionResult.toString(), 'ether') });
 
     this.contractFactory.methods
-      .createContract(party1Signature, this.web3.utils.toWei(rideCost.value.toString(), 'ether'))
-      .send({ from: selectedAddress, gas: gasEstimate, value: this.web3.utils.toWei(rideCost.value.toString(), 'ether') })
+      .createContract(party1Signature, this.web3.utils.toWei(this.auctionResult.toString(), 'ether'))
+      .send({ from: selectedAddress, gas: gasEstimate, value: this.web3.utils.toWei(this.auctionResult.toString(), 'ether') })
       .on('transactionHash', (hash: string) => {
         console.log('Transaction hash:', hash);
       })

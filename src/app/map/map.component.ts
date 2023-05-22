@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl';
 import { SharedService } from '../services/shared.service';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from "rxjs";
 
 @Component({
   selector: 'app-map',
@@ -25,7 +27,9 @@ export class MapComponent implements OnInit {
   rideDistance: number | any;
   rideDuration: number | any;
 
-  constructor(private sharedService: SharedService, private router: Router) { }
+  auctionPrice: string | any;
+
+  constructor(private sharedService: SharedService, private router: Router, private http: HttpClient) { }
 
   ngOnInit() {
     // Set mapbox access token
@@ -47,6 +51,9 @@ export class MapComponent implements OnInit {
     });
     this.sharedService.getRideDuration().subscribe(value => {
       this.rideDuration = value;
+    });
+    this.sharedService.getAuctionResult().subscribe(value => {
+      this.auctionPrice = value;
     });
   }
 
@@ -139,34 +146,31 @@ export class MapComponent implements OnInit {
     this.routeFound = !this.routeFound;
   }
 
-  async findRide(pickupLocation: string, dropoffLocation: string): Promise<any> {
-    console.log("searching for ride");
-    const response = await fetch('https://matching-service.azurewebsites.net/findRide', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ pickupLocation, dropoffLocation })
-    });
+  findRide(pickupLocation: string, dropoffLocation: string): Observable<any> {
+    const headers = { "content-type": "application/json" };
+    const body = JSON.stringify({ pickupLocation, dropoffLocation });
 
-    console.log("Response: ", response);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    console.log("Response: ", response);
-    return await response.json();
+    return this.http.post('https://matching-service.azurewebsites.net/findRide', body, { 'headers': headers });
   }
+
+  getStatus(pickupLocation: string, dropoffLocation: string): Observable<any> {
+    const headers = { "content-type": "application/json" };
+    const body = JSON.stringify({ pickupLocation, dropoffLocation });
+
+    return this.http.get('https://matching-service.azurewebsites.net/health', { 'headers': headers });
+  }
+
+
+
+
 
   async startBooking() {
     // Implement your login functionality here
     console.log('Login button clicked');
     this.router.navigate(['/booking']);
 
-    await this.findRide('Location 1', 'Location 2')
-    .then(
-     data => console.log(data)
-    )
-    .catch(error => console.error(error));
+    await this.findRide('Location 1', 'Location 2').subscribe((data: any) => {
+      this.sharedService.updateAuctionResult(data.rideCost);
+    });
   }
 }
