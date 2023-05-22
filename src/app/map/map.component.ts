@@ -141,7 +141,7 @@ export class MapComponent implements OnInit {
 
   async findRide(pickupLocation: string, dropoffLocation: string): Promise<any> {
     console.log("searching for ride");
-    const response = await fetch('https://localhost:3000/findRide', {
+    const response = await fetch('https://matching-service.azurewebsites.net/findRide', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -149,6 +149,7 @@ export class MapComponent implements OnInit {
       body: JSON.stringify({ pickupLocation, dropoffLocation })
     });
 
+    console.log("Response: ", response);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -162,10 +163,10 @@ export class MapComponent implements OnInit {
     console.log('Login button clicked');
     this.router.navigate(['/booking']);
 
-    //await this.findRide('Location 1', 'Location 2')
-    //.then(
-    //  data => console.log(data)
-    //)
-    //.catch(error => console.error(error));
+    await this.findRide('Location 1', 'Location 2')
+    .then(
+     data => console.log(data)
+    )
+    .catch(error => console.error(error));
   }
 }
