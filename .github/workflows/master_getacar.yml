@@ -48,9 +48,6 @@ jobs:
         with:
           name: node-app
 
-      - name: Clean workspace
-        run: rm -rf *
-
       - name: unzip artifact for deployment
         run: unzip -o release.zip
 
