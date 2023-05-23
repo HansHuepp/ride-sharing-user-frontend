@@ -6,6 +6,8 @@ import contractFactoryAbi from '../abi-files/contractFactoryAbi.json' ;
 import contractAbi from '../abi-files/contractAbi.json' ;
 import { SharedService } from '../services/shared.service';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from "rxjs";
 declare let window:any;
 
 @Component({
@@ -15,7 +17,7 @@ declare let window:any;
 })
 export class BookingComponent {
 
-  constructor(private cdr: ChangeDetectorRef, private sharedService: SharedService, private router: Router) { }
+  constructor(private cdr: ChangeDetectorRef, private sharedService: SharedService, private router: Router, private http: HttpClient) { }
 
 
 
@@ -35,6 +37,7 @@ export class BookingComponent {
   rideProviderArrivedAtPickupLocation: boolean = false;
   rideProviderStartedRide: boolean = false;
   rideProviderArrivedAtDropoffLocation: boolean = false;
+  rideMarkedComplete: boolean = false;
   rideProviderCanceldRide: boolean = false;
   auctionResult: string = "";
 
@@ -93,12 +96,12 @@ export class BookingComponent {
     // Call the createContract function
     const party1Signature = '0xe382c6fbda9a7cafb4825dd04c2d5c10055da82c1a9dfcf761f6ccaffc7b2c1b';
     const gasEstimate = await this.contractFactory.methods
-      .createContract(party1Signature, this.web3.utils.toWei(this.auctionResult.toString(), 'ether'))
-      .estimateGas({ from: selectedAddress, value: this.web3.utils.toWei(this.auctionResult.toString(), 'ether') });
+      .createContract(party1Signature, this.auctionResult)
+      .estimateGas({ from: selectedAddress, value: this.auctionResult });
 
     this.contractFactory.methods
-      .createContract(party1Signature, this.web3.utils.toWei(this.auctionResult.toString(), 'ether'))
-      .send({ from: selectedAddress, gas: gasEstimate, value: this.web3.utils.toWei(this.auctionResult.toString(), 'ether') })
+      .createContract(party1Signature, this.auctionResult)
+      .send({ from: selectedAddress, gas: gasEstimate, value: this.auctionResult })
       .on('transactionHash', (hash: string) => {
         console.log('Transaction hash:', hash);
       })
@@ -119,8 +122,15 @@ export class BookingComponent {
       });
   }
 
+  sendContractAddress(contractAddress:string): Observable<any> {
+    const headers = { "content-type": "application/json" };
+    const body = contractAddress;
+
+    return this.http.post('https://matching-service.azurewebsites.net/contractAddress', body, { 'headers': headers });
+  }
+
   async setUserReadyToStartRide(){
-    const userReadyToStartRideMessage = document.getElementById('userReadyToStartRideMessage') as HTMLInputElement;
+    const userReadyToStartRideMessage = "Ready to start ride"
     console.log("Adresse: ",this.rideContractAddress)
 
     if (!this.web3) {
@@ -139,11 +149,11 @@ export class BookingComponent {
 
     // Call the createContract function
     const gasEstimate = await this.contractFactory.methods
-      .setUserReadyToStartRide(userReadyToStartRideMessage.value)
+      .setUserReadyToStartRide(userReadyToStartRideMessage)
       .estimateGas({ from: selectedAddress });
 
     this.contractFactory.methods
-      .setUserReadyToStartRide(userReadyToStartRideMessage.value)
+      .setUserReadyToStartRide(userReadyToStartRideMessage)
       .send({ from: selectedAddress, gas: gasEstimate })
       .on('transactionHash', (hash: string) => {
         console.log('Transaction hash:', hash);
@@ -158,7 +168,7 @@ export class BookingComponent {
 
   }
   async setUserMarkedRideComplete(){
-    const userMarkedRideCompleteMessage = document.getElementById('userMarkedRideCompleteMessage') as HTMLInputElement;
+    const userMarkedRideCompleteMessage = "Ride complete";
 
     if (!this.web3) {
       console.error('MetaMask not connected');
@@ -176,17 +186,19 @@ export class BookingComponent {
 
     // Call the createContract function
     const gasEstimate = await this.contractFactory.methods
-      .setUserMarkedRideComplete(userMarkedRideCompleteMessage.value)
+      .setUserMarkedRideComplete(userMarkedRideCompleteMessage)
       .estimateGas({ from: selectedAddress });
 
     this.contractFactory.methods
-      .setUserMarkedRideComplete(userMarkedRideCompleteMessage.value)
+      .setUserMarkedRideComplete(userMarkedRideCompleteMessage)
       .send({ from: selectedAddress, gas: gasEstimate })
       .on('transactionHash', (hash: string) => {
         console.log('Transaction hash:', hash);
       })
       .on('receipt', (receipt: any) => {
         console.log('Transaction receipt events:', receipt);
+        this.rideMarkedComplete = true;
+        this.cdr.detectChanges();
       })
 
       .on('error', (error: Error) => {
@@ -240,13 +252,10 @@ export class BookingComponent {
   }
 
   cancelBooking() {
-    // Implement your login functionality here
-    console.log('Login button clicked');
-    // Navigate to localhost:4200/user
     this.router.navigate(['/map']);
   }
 
-
-
-
+  bookNewRide() {
+    this.router.navigate(['/']);
+  }
 }

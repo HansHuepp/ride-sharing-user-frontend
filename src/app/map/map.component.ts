@@ -170,7 +170,12 @@ export class MapComponent implements OnInit {
     this.router.navigate(['/booking']);
 
     await this.findRide('Location 1', 'Location 2').subscribe((data: any) => {
-      this.sharedService.updateAuctionResult(data.rideCost);
+      // data.rideCost is an Amount of Euro. Convert the amount to WEi
+      const weiPerEuro = 1e18 / 1684.92;
+
+      const auctionResultInWei = data.rideCost * weiPerEuro;
+      console.log("Amount in WEI: ",auctionResultInWei);
+      this.sharedService.updateAuctionResult(auctionResultInWei.toString());
     });
   }
 }

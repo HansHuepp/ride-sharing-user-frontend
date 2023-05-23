@@ -6,8 +6,14 @@
   <button class="cancel-button" (click)="cancelBooking()">Cancel</button>
 </div>
 
-<div *ngIf="rideSearchFoundStatus">
-  <div class="rideDetails" ><p>Your Ride:</p></div>
+<div *ngIf="rideSearchFoundStatus && !rideContractAddress">
+  <div class="rideDetails" >
+    <p class="rideDetailsTextHeader">Your Ride:</p>
+    <p class="rideDetailsText">Price:&emsp;&nbsp;&emsp;&nbsp;&emsp;&nbsp;&emsp;&nbsp;&nbsp;&nbsp;&nbsp;12 €</p>
+    <p class="rideDetailsText">Arrival Time:&emsp;&nbsp;&emsp;&nbsp;5 min</p>
+    <p class="rideDetailsText">Passangers:&emsp;&nbsp;&emsp;&nbsp;2</p>
+    <p class="rideDetailsText">Model:&emsp;&nbsp;&emsp;&nbsp;&emsp;&nbsp;&emsp;&nbsp;&nbsp;Mercedes EQS</p>
+  </div>
   <button  id="bookRideButton" (click)="bookRide()">Book Ride</button>
 </div>
 
@@ -18,25 +24,29 @@
 </div>
 
 <div *ngIf="rideProviderAcceptedStatus">
-  <h3>Status: Accepted and Driving to the Pick-up Location</h3>
+  <h3 class="center-text">Status: <br> Accepted and Driving to the Pick-up Location</h3>
 </div>
 
 <div *ngIf="rideProviderArrivedAtPickupLocation">
-  <input id="userReadyToStartRideMessage" type="text" placeholder="Enter Message">
-  <button id="userReadyToStartRide" (click)="setUserReadyToStartRide()">Entered Vehicle and Ready to Start</button>
+  <h3 class="left-text">Status: <br> Vehicle arrived at Pick-up Location</h3>
+  <p class="left-text"> Please enter the Vehicle and Press the Button when you are Ready to start the Drive</p>
+  <button id="userReadyToStartRide" (click)="setUserReadyToStartRide()">Start Driving</button>
 </div>
 
 <div *ngIf="rideProviderStartedRide">
-  <h3>Ride Status: Starting the Ride to your Drop-of Location</h3>
+  <h3 class="left-text">Status: <br> Driving to your Destination</h3>
 </div>
 
-<div *ngIf="rideProviderArrivedAtDropoffLocation">
-  <h3>Ride Status: We arrived at your Destination</h3>
-</div>
-
-<div *ngIf="rideProviderArrivedAtDropoffLocation">
-  <input id="userMarkedRideCompleteMessage" type="text" placeholder="Enter Message">
+<div *ngIf="rideProviderArrivedAtDropoffLocation && !rideMarkedComplete">
+  <h3 class="left-text">Status: <br> We arrived at your Destination</h3>
+  <p class="left-text"> Please leave the Vehicle and Press the Button to complete your Ride</p>
   <button id="userMarkedRideComplete" (click)="setUserMarkedRideComplete()">Ride successfully completed</button>
+</div>
+
+<div *ngIf="rideMarkedComplete">
+  <h3 class="left-text"> Ride Completed</h3>
+  <p class="left-text"> Thank you for riding with us</p>
+  <button (click)="bookNewRide()">Home</button>
 </div>
 
 <app-footer></app-footer>

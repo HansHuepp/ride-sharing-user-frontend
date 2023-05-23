@@ -86,6 +86,12 @@ h4 {
   padding-bottom: 80px;
 }
 
+.left-text {
+  display: flex;
+  padding: 20px;
+  padding-left: 40px;
+}
+
 .loading  {
   display: flex;
   justify-content: center;
@@ -106,3 +112,18 @@ h4 {
   border: 1px solid;
   border-color: #000000;
 }
+
+.rideDetailsText {
+  font-family: 'Poppins';
+  padding-left: 10px;
+}
+
+.rideDetailsTextHeader {
+  padding: 10px;
+  font-family: 'Poppins';
+  font-size: 1.2em;
+}
+
+.tab {
+        tab-size: 2;
+    }

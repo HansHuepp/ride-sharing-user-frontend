@@ -65,6 +65,7 @@ export class RideProviderComponent {
 
   async onSignRideButtonClick() {
     const contractID = document.getElementById('contractID') as HTMLInputElement;
+    this.rideContractAddress = contractID.value;
 
     if (!this.web3) {
       console.error('MetaMask not connected');
@@ -98,7 +99,7 @@ export class RideProviderComponent {
       .on('receipt', (receipt: any) => {
         console.log('Transaction receipt events:', receipt);
         // find the value newContract in receipt.events
-        this.rideContractAddress = receipt.events.ContractCreated.returnValues.newContract;
+        console.log('Start listening for updates');
         this.listenForUpdates();
       })
 
@@ -270,10 +271,10 @@ export class RideProviderComponent {
     .on('data', (event: any) => {
       const functionName = event.returnValues.functionName;
       console.log("Function Name: ", functionName);
+
+
     })
     .on('error', console.error);
   }
-
-
 
 }
