@@ -18,13 +18,12 @@
 </div>
 
 <div *ngIf="rideContractAddress && rideProviderAcceptedStatus == false && rideProviderArrivedAtPickupLocation == false && rideProviderStartedRide == false && rideProviderArrivedAtDropoffLocation== false ">
-  <h3>Ride Contract Address:</h3>
-  <p>{{ rideContractAddress }} <button (click)="copyAddress()" id="copyButton">Copy</button></p>
+  <h3 class="center-text">Waiting for the Ride provider to confirm the ride</h3>
 
 </div>
 
 <div *ngIf="rideProviderAcceptedStatus">
-  <h3 class="center-text">Status: <br> Accepted and Driving to the Pick-up Location</h3>
+  <h3 class="center-text">Status: <br> Ride Provider confirmed Ride and is now Driving to the Pick-up Location</h3>
 </div>
 
 <div *ngIf="rideProviderArrivedAtPickupLocation">

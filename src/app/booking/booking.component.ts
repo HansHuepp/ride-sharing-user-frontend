@@ -105,11 +105,13 @@ export class BookingComponent {
       .on('transactionHash', (hash: string) => {
         console.log('Transaction hash:', hash);
       })
-      .on('receipt', (receipt: any) => {
+      .on('receipt', async (receipt: any) => {
         console.log('Transaction receipt events:', receipt);
         // find the value newContract in receipt.events
         this.rideContractAddress = receipt.events.ContractCreated.returnValues.newContract;
         console.log('Ride Contract Address:', this.rideContractAddress);
+        console.log('sending Contract Address to backend');
+        this.sendContractAddress(this.rideContractAddress)
 
         // Start listening for updates
         console.log('Start listening for updates');
@@ -122,11 +124,14 @@ export class BookingComponent {
       });
   }
 
-  sendContractAddress(contractAddress:string): Observable<any> {
-    const headers = { "content-type": "application/json" };
-    const body = contractAddress;
-
-    return this.http.post('https://matching-service.azurewebsites.net/contractAddress', body, { 'headers': headers });
+   sendContractAddress(contractAddress:string): void {
+    fetch('http://localhost:3000/startRide', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ contractAddress: contractAddress }),
+    })
   }
 
   async setUserReadyToStartRide(){
