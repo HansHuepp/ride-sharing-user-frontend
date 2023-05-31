@@ -172,6 +172,46 @@ export class BookingComponent {
       });
 
   }
+
+  async cancelRide(){
+    const userCanceldRideMessage = "Ride canceled"
+    console.log("Adresse: ",this.rideContractAddress)
+
+    if (!this.web3) {
+      console.error('MetaMask not connected');
+      return;
+    }
+
+    const accounts = await this.web3.eth.getAccounts();
+    const selectedAddress = accounts[0];
+
+    // Initialize the contract instance
+    this.rideContract = new this.web3.eth.Contract(
+      contractAbi as AbiItem[],
+      this.rideContractAddress,
+    );
+
+    // Call the createContract function
+    const gasEstimate = await this.rideContract.methods
+      .setUserCanceldRide(userCanceldRideMessage)
+      .estimateGas({ from: selectedAddress });
+
+    this.rideContract.methods
+      .setUserCanceldRide(userCanceldRideMessage)
+      .send({ from: selectedAddress, gas: gasEstimate })
+      .on('transactionHash', (hash: string) => {
+        console.log('Transaction hash:', hash);
+      })
+      .on('receipt', (receipt: any) => {
+        console.log('Transaction receipt events:', receipt);
+        this.cancelBooking();
+      })
+
+      .on('error', (error: Error) => {
+        console.error('Error:', error);
+      });
+  }
+
   async setUserMarkedRideComplete(){
     const userMarkedRideCompleteMessage = "Ride complete";
 

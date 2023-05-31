@@ -4,8 +4,8 @@
 
 <div *ngIf="!routeFound">
   <div class="input-icon">
-    <input type="text" [(ngModel)]="pickupLocation" placeholder="Enter Pickup Location"/>
-    <i class="fas fa-location-arrow" ></i>
+    <input type="text" id="pickuo" [(ngModel)]="pickupLocation" placeholder="Enter Pickup Location"/>
+    <i (click)="getCurrentLocation()" class="fas fa-location-arrow" ></i>
   </div>
   <input type="text" [(ngModel)]="dropoffLocation" placeholder="Enter Dropoff Location"/>
   <button (click)="displayRoute()">Find Route</button>

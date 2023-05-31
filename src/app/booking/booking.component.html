@@ -15,6 +15,7 @@
     <p class="rideDetailsText">Model:&emsp;&nbsp;&emsp;&nbsp;&emsp;&nbsp;&emsp;&nbsp;&nbsp;Mercedes EQS</p>
   </div>
   <button  id="bookRideButton" (click)="bookRide()">Book Ride</button>
+  <button (click)="bookNewRide()">Back</button>
 </div>
 
 <div *ngIf="rideContractAddress && rideProviderAcceptedStatus == false && rideProviderArrivedAtPickupLocation == false && rideProviderStartedRide == false && rideProviderArrivedAtDropoffLocation== false ">
@@ -40,6 +41,10 @@
   <h3 class="left-text">Status: <br> We arrived at your Destination</h3>
   <p class="left-text"> Please leave the Vehicle and Press the Button to complete your Ride</p>
   <button id="userMarkedRideComplete" (click)="setUserMarkedRideComplete()">Ride successfully completed</button>
+</div>
+
+<div *ngIf="!rideMarkedComplete && rideContractAddress">
+  <button (click)="cancelRide()">Cancel Ride</button>
 </div>
 
 <div *ngIf="rideMarkedComplete">

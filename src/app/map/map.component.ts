@@ -14,8 +14,8 @@ export class MapComponent implements OnInit {
 
   map: mapboxgl.Map |any;
   style = 'mapbox://styles/mapbox/navigation-day-v1';
-  lat = 48.744808;
-  lng = 9.107820;
+  lat = 48.7725055;
+  lng = 9.1661194;
   pickupLocation: string | any  ;
   dropoffLocation: string | any ; //lat and long of San Francisco
   rideDistanceAndDurcationString: string | any;
@@ -69,6 +69,15 @@ export class MapComponent implements OnInit {
     this.map.addControl(new mapboxgl.NavigationControl());
   }
 
+  async getPickupLocation(pickupLocation: string) {
+    if(this.pickupLocation !== "Current Location"){
+      return await this.getCoordinates(pickupLocation);
+    }
+    else{
+      console.log("Current location: ", this.lat, this.lng);
+      return await this.getCurrentLocation();
+    }
+  }
   async displayRoute() {
     // Clear previous route
     if (this.map.getSource('route')) {
@@ -77,8 +86,14 @@ export class MapComponent implements OnInit {
     }
 
     // Split pickup and dropoff locations into lat, lng arrays
-    const pickup = await this.getCoordinates(this.pickupLocation);
+
+    const pickup = await this.getPickupLocation(this.pickupLocation);
+
     const dropoff = await this.getCoordinates(this.dropoffLocation);
+
+    console.log("Pickup: ", pickup);
+    console.log("Dropoff: ", dropoff);
+
 
     this.sharedService.updatePickupLocationCoordinates(pickup);
     this.sharedService.updateDropoffLocationCoordinates(dropoff);
@@ -160,7 +175,24 @@ export class MapComponent implements OnInit {
     return this.http.get('https://matching-service.azurewebsites.net/health', { 'headers': headers });
   }
 
+// getCurrent location from browser
+  async getCurrentLocation(): Promise<[number, number]> {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(position => {
+        this.lat = position.coords.latitude;
+        this.lng = position.coords.longitude;
+        console.log("Current location: ", this.lat, this.lng);
 
+        this.map.flyTo({
+          center: [this.lng, this.lat]
+        });
+      });
+    }
+    //Change placeholder to current location
+    this.pickupLocation = "Current Location";
+
+    return [this.lng, this.lat];
+  }
 
 
 
@@ -168,14 +200,10 @@ export class MapComponent implements OnInit {
     // Implement your login functionality here
     console.log('Login button clicked');
     this.router.navigate(['/booking']);
+    const auctionResultInWei = 100;
+    console.log("Amount in WEI: ",auctionResultInWei);
+    this.sharedService.updateAuctionResult(auctionResultInWei.toString());
 
-    await this.findRide('Location 1', 'Location 2').subscribe((data: any) => {
-      // data.rideCost is an Amount of Euro. Convert the amount to WEi
-      const weiPerEuro = 1e18 / 1684.92;
 
-      const auctionResultInWei = data.rideCost * weiPerEuro;
-      console.log("Amount in WEI: ",auctionResultInWei);
-      this.sharedService.updateAuctionResult(auctionResultInWei.toString());
-    });
   }
 }
