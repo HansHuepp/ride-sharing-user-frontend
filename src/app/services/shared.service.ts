@@ -14,6 +14,8 @@ export class SharedService {
 
   private pickupLocationCoordinates = new BehaviorSubject<[number, number] | any>(null);
   private dropoffLocationCoordinates = new BehaviorSubject<[number, number] | any>(null);
+  private pickupLocationCoordinatesGrid = new BehaviorSubject<[number, number] | any>(null);
+  private dropoffLocationCoordinatesGrid = new BehaviorSubject<[number, number] | any>(null);
   private rideCost = new BehaviorSubject<string>("");
   private rideDistance = new BehaviorSubject<number | null>(null);
   private rideDuration = new BehaviorSubject<number | null>(null);
@@ -34,6 +36,22 @@ export class SharedService {
 
   updateDropoffLocationCoordinates(newValue: [number, number] | any) {
     this.dropoffLocationCoordinates.next(newValue);
+  }
+
+  getPickupLocationCoordinatesGrid() {
+    return this.pickupLocationCoordinatesGrid.asObservable();
+  }
+
+  updatePickupLocationCoordinatesGrid(newValue: [number, number] | any) {
+    this.pickupLocationCoordinatesGrid.next(newValue);
+  }
+
+  getDropoffLocationCoordinatesGrid() {
+    return this.dropoffLocationCoordinatesGrid.asObservable();
+  }
+
+  updateDropoffLocationCoordinatesGrid(newValue: [number, number] | any) {
+    this.dropoffLocationCoordinatesGrid.next(newValue);
   }
 
   getRideCost() {

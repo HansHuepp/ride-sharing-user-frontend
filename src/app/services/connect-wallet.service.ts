@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import Web3 from 'web3';
-import { SharedService } from '../services/shared.service';
+import { SharedService } from './shared.service';
 declare let window:any;
 
 @Injectable({

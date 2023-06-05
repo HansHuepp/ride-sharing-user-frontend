@@ -65,7 +65,7 @@
             },
             "development": {
               "browserTarget": "ride-sharing-user-frontend:build:development",
-              "port": 8080
+              "port": 4200
             }
           },
           "defaultConfiguration": "development"

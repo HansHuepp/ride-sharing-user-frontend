@@ -7,7 +7,9 @@ import contractAbi from '../abi-files/contractAbi.json' ;
 import { SharedService } from '../services/shared.service';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from "rxjs";
+import { Observable, find } from "rxjs";
+import { RequestRideService } from '../services/request-ride.service';
+import { TmplAstRecursiveVisitor } from '@angular/compiler';
 declare let window:any;
 
 @Component({
@@ -17,7 +19,7 @@ declare let window:any;
 })
 export class BookingComponent {
 
-  constructor(private cdr: ChangeDetectorRef, private sharedService: SharedService, private router: Router, private http: HttpClient) { }
+  constructor(private requestRide: RequestRideService, private cdr: ChangeDetectorRef, private sharedService: SharedService, private router: Router, private http: HttpClient) { }
 
 
 
@@ -26,7 +28,7 @@ export class BookingComponent {
   myAddress: string  = "";
   myBalance: string  = "";
 
-  contractFactoryAddress = '0xC3250dB2106a6b7dc2Dc02D461039b4925E508F2';
+  contractFactoryAddress = '0x13e15147495bE38c7EDd1466454B421c45A839CA';
   contractFactory: Contract | undefined | any;
 
   rideContractAddress: string | null | any= null;
@@ -40,6 +42,11 @@ export class BookingComponent {
   rideMarkedComplete: boolean = false;
   rideProviderCanceldRide: boolean = false;
   auctionResult: string = "";
+
+  pickupLocationCoordinates: [number, number] | any;
+  dropoffLocationCoordinates: [number, number] | any;
+  pickupLocationCoordinatesGrid: [number, number] | any;
+  dropoffLocationCoordinatesGrid: [number, number] | any;
 
   async ngOnInit() {
     console.log(this.rideContractAddress);
@@ -55,18 +62,41 @@ export class BookingComponent {
     this.sharedService.getAuctionResult().subscribe(value => {
       this.auctionResult = value;
     });
+    this.sharedService.getPickupLocationCoordinates().subscribe(value => {
+      this.pickupLocationCoordinates = value;
+    });
+    this.sharedService.getDropoffLocationCoordinates().subscribe(value => {
+      this.dropoffLocationCoordinates = value;
+    });
+    this.sharedService.getPickupLocationCoordinatesGrid().subscribe(value => {
+      this.pickupLocationCoordinatesGrid = value;
+    });
+    this.sharedService.getDropoffLocationCoordinatesGrid().subscribe(value => {
+      this.dropoffLocationCoordinatesGrid = value;
+    });
 
-    //call find dummy after 5 seconds
-    setTimeout(() => {
-      this.findRideDummy();
+    await this.findRide();
+  }
+
+  async findRide() {
+    const coordinates = {
+      pickupLocationCoordinates: this.pickupLocationCoordinates,
+      dropoffLocationCoordinates: this.dropoffLocationCoordinates,
     }
-    , 5000);
+    this.requestRide.toGridRideLocation(coordinates);
+    console.log('Coordinates:', coordinates);
+    await this.requestRide.requestRide().then((rideId: string) => {
+      //wait 1 minute
+      setTimeout(() => {
+        this.requestRide.getRideRequest(rideId);
+        console.log('Ride ID:', rideId);
+      }, 60100)}).then(() => {
+        this.rideSearchFoundStatus = true
+        this.cdr.detectChanges();
+
+    });
   }
 
-  findRideDummy() {
-      this.rideSearchFoundStatus = true;
-      this.cdr.detectChanges();
-  }
 
   async copyAddress() {
     try {

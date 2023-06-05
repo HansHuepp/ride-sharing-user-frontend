@@ -1,4 +1,4 @@
-import { ConnectWalletService } from './../services/connect-wallet.service';
+import { ConnectWalletService } from '../services/connect-wallet.service';
 import { Component } from '@angular/core';
 import Web3 from 'web3';
 import { SharedService } from '../services/shared.service';
