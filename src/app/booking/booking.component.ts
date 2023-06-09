@@ -1,3 +1,4 @@
+import { AppModule } from './../app.module';
 import { Component, ChangeDetectorRef } from '@angular/core';
 import Web3 from 'web3';
 import  Contract from 'web3'
@@ -34,7 +35,15 @@ export class BookingComponent {
   rideContractAddress: string | null | any= null;
   rideContract: Contract | undefined | any;
 
-  rideSearchFoundStatus: boolean = false;
+  rideId: string = "";
+  rideFoundStatus: boolean = false;
+  model: string = "";
+  estimatedArrivalTime: number = 0;
+  passengerCount: number = 0;
+  rating: number = 0;
+  amount: number = 0;
+
+  rideSearchStatus: boolean = false;
   rideProviderAcceptedStatus: boolean | null = false;
   rideProviderArrivedAtPickupLocation: boolean = false;
   rideProviderStartedRide: boolean = false;
@@ -86,15 +95,35 @@ export class BookingComponent {
     this.requestRide.toGridRideLocation(coordinates);
     console.log('Coordinates:', coordinates);
     await this.requestRide.requestRide().then((rideId: string) => {
+      console.log('Ride ID:', rideId);
+      this.rideId = rideId;
       //wait 1 minute
-      setTimeout(() => {
-        this.requestRide.getRideRequest(rideId);
-        console.log('Ride ID:', rideId);
-      }, 60100)}).then(() => {
-        this.rideSearchFoundStatus = true
+      setTimeout(async () => {
+        const respone = await this.requestRide.getRideRequest(rideId);
+        console.log("Response: ", JSON.stringify(respone));
+        this.rideSearchStatus = true
         this.cdr.detectChanges();
-
-    });
+        if(respone.rideRequest.winningBid == null)
+        {
+          console.log("No ride found");
+          this.rideFoundStatus = false;
+          this.cdr.detectChanges();
+          return;
+        }
+        else
+        {
+          console.log("Ride found");
+          this.rideFoundStatus = true;
+          this.model = respone.bid.model;
+          this.estimatedArrivalTime = respone.bid.estimatedArrivalTime;
+          this.passengerCount = respone.bid.passengerCount;
+          this.rating = respone.bid.rating;
+          this.amount = respone.rideRequest.auctionWinner;
+          console.log("Amount: ", this.amount);
+          console.log("Model: ", this.model);
+          this.cdr.detectChanges();
+        }
+      }, 70100)});
   }
 
 
@@ -146,6 +175,8 @@ export class BookingComponent {
         // Start listening for updates
         console.log('Start listening for updates');
         this.listenForUpdates();
+        console.log('Set contract address', this.rideId);
+        await this.requestRide.setContractAddress(this.rideId ,this.rideContractAddress);
 
       })
 

@@ -2,8 +2,20 @@ import { Component, OnInit } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl';
 import { SharedService } from '../services/shared.service';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from "rxjs";
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, of } from "rxjs";
+import { catchError, tap } from 'rxjs/operators';
+
+interface MapboxDirectionsResponse {
+  routes: Route[];
+}
+
+interface Route {
+  geometry: any;
+  distance: number;
+  duration: number;
+}
+
 
 @Component({
   selector: 'app-map',
@@ -12,31 +24,31 @@ import { Observable } from "rxjs";
 })
 export class MapComponent implements OnInit {
 
-  map: mapboxgl.Map |any;
+  map!: mapboxgl.Map;
   style = 'mapbox://styles/mapbox/navigation-day-v1';
   lat = 48.7725055;
   lng = 9.1661194;
-  pickupLocation: string | any  ;
-  dropoffLocation: string | any ; //lat and long of San Francisco
-  rideDistanceAndDurcationString: string | any;
-  routeFound: boolean = false;
+  pickupLocation = '';
+  dropoffLocation = '';
+  rideDistanceAndDurcationString = '';
+  routeFound = false;
 
-  pickupLocationCoordinates: [number, number] | any;
-  dropoffLocationCoordinates: [number, number] | any;
-  rideCost: string | any;
-  rideDistance: number | any;
-  rideDuration: number | any;
+  pickupLocationCoordinates!: [number, number];
+  dropoffLocationCoordinates!: [number, number];
+  rideCost = '';
+  rideDistance: any;
+  rideDuration: number | null = 0;
+  auctionPrice = '';
 
-  auctionPrice: string | any;
+  httpOptions = {
+    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  };
 
   constructor(private sharedService: SharedService, private router: Router, private http: HttpClient) { }
 
   ngOnInit() {
-    // Set mapbox access token
-    (mapboxgl as any).accessToken = 'pk.eyJ1IjoiaGFuc2h1ZXBwIiwiYSI6ImNsaGx6YWhodjE2bTAzam54MXUyeDVoMnoifQ.t0d6PapiyCFDLYX3uAyYiw';
-
+    (mapboxgl as typeof mapboxgl).accessToken = 'pk.eyJ1IjoiaGFuc2h1ZXBwIiwiYSI6ImNsaGx6YWhodjE2bTAzam54MXUyeDVoMnoifQ.t0d6PapiyCFDLYX3uAyYiw';
     this.initializeMap();
-
     this.sharedService.getPickupLocationCoordinates().subscribe(value => {
       this.pickupLocationCoordinates = value;
     });
@@ -65,145 +77,163 @@ export class MapComponent implements OnInit {
       center: [this.lng, this.lat]
     });
 
-    // Add map controls
     this.map.addControl(new mapboxgl.NavigationControl());
   }
 
   async getPickupLocation(pickupLocation: string) {
-    if(this.pickupLocation !== "Current Location"){
-      return await this.getCoordinates(pickupLocation);
-    }
-    else{
-      console.log("Current location: ", this.lat, this.lng);
-      return await this.getCurrentLocation();
-    }
+    if(pickupLocation !== "Current Location") return this.getCoordinates(pickupLocation);
+    console.log("Current location: ", this.lat, this.lng);
+    return this.getCurrentLocation();
   }
+
+  async getCoordinates(address: string): Promise<[number, number]> {
+    const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${(mapboxgl as typeof mapboxgl).accessToken}`);
+    const data = await response.json();
+    return data.features[0].center;
+  }
+
   async displayRoute() {
-    // Clear previous route
     if (this.map.getSource('route')) {
       this.map.removeLayer('route');
       this.map.removeSource('route');
     }
 
-    // Split pickup and dropoff locations into lat, lng arrays
-
     const pickup = await this.getPickupLocation(this.pickupLocation);
-
     const dropoff = await this.getCoordinates(this.dropoffLocation);
 
     console.log("Pickup: ", pickup);
     console.log("Dropoff: ", dropoff);
 
-
     this.sharedService.updatePickupLocationCoordinates(pickup);
     this.sharedService.updateDropoffLocationCoordinates(dropoff);
 
-    // Fetch route from Mapbox Directions API
-    fetch(`https://api.mapbox.com/directions/v5/mapbox/driving/${pickup[0]},${pickup[1]};${dropoff[0]},${dropoff[1]}?geometries=geojson&access_token=${mapboxgl.accessToken}`)
-      .then(response => response.json())
-      .then(data => {
+    this.http.get<MapboxDirectionsResponse>(`https://api.mapbox.com/directions/v5/mapbox/driving/${pickup[0]},${pickup[1]};${dropoff[0]},${dropoff[1]}?geometries=geojson&access_token=${(mapboxgl as typeof mapboxgl).accessToken}`)
+    .subscribe(data => {
         const route = data.routes[0].geometry;
-        let myRideDistance = data.routes[0].distance / 1000; // Convert from meters to kilometers
-        myRideDistance = Math.round(myRideDistance * 10) / 10;
+
+        const myRideDistance = this.calculateDistance(data.routes[0].distance);
         this.sharedService.updateRideDistance(myRideDistance);
 
-        let myRideDuration = data.routes[0].duration / 60; // Convert from seconds to minutes
-        myRideDuration = Math.round(myRideDuration * 10) / 10;
+        const myRideDuration = this.calculateDuration(data.routes[0].duration);
         this.sharedService.updateRideDuration(myRideDuration);
 
-        this.rideDistanceAndDurcationString = `Durration: ${this.rideDuration} min / ${this.rideDistance} km`;
+        this.rideDistanceAndDurcationString = `Duration: ${this.rideDuration} min / ${this.rideDistance} km`;
+        console.log("Ride distance: ", this.rideDistance);
 
-
-        let myRideCost = this.rideDistance * 1.5;
-        myRideCost = Math.round(myRideCost * 100) / 100;
-        this.sharedService.updateRideCost(myRideCost.toString());
+        const myRideCost = this.calculateCost(this.rideDistance);
+        this.sharedService.updateRideCost(myRideCost);
         this.rideCost = `Est. max. Cost: ${this.rideCost} €`;
 
-        // Add a new source and layer to the map for the route
-        this.map.addSource('route', {
-          'type': 'geojson',
-          'data': route
-        });
+        this.addRouteToMap(route);
 
-        this.map.addLayer({
-          'id': 'route',
-          'type': 'line',
-          'source': 'route',
-          'layout': {
-            'line-join': 'round',
-            'line-cap': 'round'
-          },
-          'paint': {
-            'line-color': '#1db7dd',
-            'line-width': 8
-          }
-        });
+        this.fitMapToBounds(pickup, dropoff);
 
-        // Fit map to route bounds
-        const bounds = new mapboxgl.LngLatBounds();
-        bounds.extend(pickup);
-        bounds.extend(dropoff);
-        this.map.fitBounds(bounds, { padding: 50 }); // 50 pixel padding around the bounds
         this.routeFoundSwitch();
-      })
-      .catch(error => console.error('Error:', error));
-  }
+    });
+}
+
+calculateDistance(distanceInMeters: number): number {
+    let distanceInKilometers = distanceInMeters / 1000;
+    return Math.round(distanceInKilometers * 10) / 10;
+}
+
+calculateDuration(durationInSeconds: number): number {
+    let durationInMinutes = durationInSeconds / 60;
+    return Math.round(durationInMinutes * 10) / 10;
+}
+
+calculateCost(distance: number): string {
+    let cost = distance * 1.5;
+    return (Math.round(cost * 100) / 100).toString();
+}
+
+routeFoundSwitch() {
+  this.routeFound = !this.routeFound;
+}
+
+async startBooking() {
+  console.log('Login button clicked');
+  this.router.navigate(['/booking']);
+  const auctionResultInWei = 100;
+  console.log("Amount in WEI: ", auctionResultInWei);
+  this.sharedService.updateAuctionResult(auctionResultInWei.toString());
+}
 
 
+addRouteToMap(route: any) {
+    this.map.addSource('route', {
+      'type': 'geojson',
+      'data': route
+    });
 
-  async getCoordinates(address: string): Promise<[number, number]> {
-    const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${mapboxgl.accessToken}`);
-    const data = await response.json();
-    return data.features[0].center;
-  }
+    this.map.addLayer({
+      'id': 'route',
+      'type': 'line',
+      'source': 'route',
+      'layout': {
+        'line-join': 'round',
+        'line-cap': 'round'
+      },
+      'paint': {
+        'line-color': '#1db7dd',
+        'line-width': 8
+      }
+    });
+}
 
-  routeFoundSwitch() {
-    this.routeFound = !this.routeFound;
+fitMapToBounds(pickup: [number, number], dropoff: [number, number]) {
+    const bounds = new mapboxgl.LngLatBounds();
+    bounds.extend(pickup);
+    bounds.extend(dropoff);
+    this.map.fitBounds(bounds, { padding: 50 });
+}
+
+
+  async getCurrentLocation(): Promise<[number, number]> {
+    return new Promise((resolve, reject) => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+          this.lat = position.coords.latitude;
+          this.lng = position.coords.longitude;
+          console.log("Current location: ", this.lat, this.lng);
+
+          this.map.flyTo({
+            center: [this.lng, this.lat]
+          });
+
+          this.pickupLocation = "Current Location";
+          resolve([this.lng, this.lat]);
+        }, error => {
+          reject(error);
+        });
+      } else {
+        reject("Geolocation is not supported by this browser.");
+      }
+    });
   }
 
   findRide(pickupLocation: string, dropoffLocation: string): Observable<any> {
-    const headers = { "content-type": "application/json" };
     const body = JSON.stringify({ pickupLocation, dropoffLocation });
 
-    return this.http.post('https://matching-service.azurewebsites.net/findRide', body, { 'headers': headers });
+    return this.http.post('https://matching-service.azurewebsites.net/findRide', body, this.httpOptions)
+    .pipe(
+      tap(_ => console.log('found ride')),
+      catchError(this.handleError<any>('findRide'))
+    );
   }
 
-  getStatus(pickupLocation: string, dropoffLocation: string): Observable<any> {
-    const headers = { "content-type": "application/json" };
-    const body = JSON.stringify({ pickupLocation, dropoffLocation });
-
-    return this.http.get('https://matching-service.azurewebsites.net/health', { 'headers': headers });
+  getStatus(): Observable<any> {
+    return this.http.get('https://matching-service.azurewebsites.net/health', this.httpOptions)
+    .pipe(
+      tap(_ => console.log('checked status')),
+      catchError(this.handleError<any>('getStatus'))
+    );
   }
 
-// getCurrent location from browser
-  async getCurrentLocation(): Promise<[number, number]> {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(position => {
-        this.lat = position.coords.latitude;
-        this.lng = position.coords.longitude;
-        console.log("Current location: ", this.lat, this.lng);
-
-        this.map.flyTo({
-          center: [this.lng, this.lat]
-        });
-      });
-    }
-    //Change placeholder to current location
-    this.pickupLocation = "Current Location";
-
-    return [this.lng, this.lat];
-  }
-
-
-
-  async startBooking() {
-    // Implement your login functionality here
-    console.log('Login button clicked');
-    this.router.navigate(['/booking']);
-    const auctionResultInWei = 100;
-    console.log("Amount in WEI: ",auctionResultInWei);
-    this.sharedService.updateAuctionResult(auctionResultInWei.toString());
-
-
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+      console.error(`${operation} failed: ${error.message}`);
+      return of(result as T);
+    };
   }
 }

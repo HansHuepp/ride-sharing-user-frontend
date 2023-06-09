@@ -1,20 +1,29 @@
 <app-header></app-header>
 
-<div *ngIf="!rideSearchFoundStatus">
+<div *ngIf="!rideSearchStatus">
   <h3 class="center-text">Finding your perfect ride...</h3>
   <div class="loading"> <app-loading></app-loading> </div>
   <button class="cancel-button" (click)="cancelBooking()">Cancel</button>
 </div>
 
-<div *ngIf="rideSearchFoundStatus && !rideContractAddress">
+<div *ngIf="rideSearchStatus && !rideContractAddress && rideFoundStatus">
   <div class="rideDetails" >
     <p class="rideDetailsTextHeader">Your Ride:</p>
-    <p class="rideDetailsText">Price:&emsp;&nbsp;&emsp;&nbsp;&emsp;&nbsp;&emsp;&nbsp;&nbsp;&nbsp;&nbsp;12 €</p>
-    <p class="rideDetailsText">Arrival Time:&emsp;&nbsp;&emsp;&nbsp;5 min</p>
-    <p class="rideDetailsText">Passangers:&emsp;&nbsp;&emsp;&nbsp;2</p>
-    <p class="rideDetailsText">Model:&emsp;&nbsp;&emsp;&nbsp;&emsp;&nbsp;&emsp;&nbsp;&nbsp;Mercedes EQS</p>
+    <p class="rideDetailsText">Amount:&emsp;&nbsp;&emsp;&nbsp;{{ amount }} €</p>
+    <p class="rideDetailsText">Estimated Arrival Time:&emsp;&nbsp;&emsp;&nbsp;{{ estimatedArrivalTime }}</p>
+    <p class="rideDetailsText">Model:&emsp;&nbsp;&emsp;&nbsp;{{ model }}</p>
+    <p class="rideDetailsText">Passenger Count:&emsp;&nbsp;&emsp;&nbsp;{{ passengerCount }}</p>
+    <p class="rideDetailsText">Rating:&emsp;&nbsp;&emsp;&nbsp;{{ rating }}</p>
   </div>
   <button  id="bookRideButton" (click)="bookRide()">Book Ride</button>
+  <button (click)="bookNewRide()">Back</button>
+</div>
+
+<div *ngIf="rideSearchStatus && !rideContractAddress && !rideFoundStatus">
+  <div class="rideDetails" >
+    <p class="rideDetailsTextHeader">Sorry we could not find a ride for you</p>
+    <p class="rideDetailsText">Please try later again</p>
+  </div>
   <button (click)="bookNewRide()">Back</button>
 </div>
 

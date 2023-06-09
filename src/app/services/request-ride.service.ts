@@ -72,7 +72,7 @@ export class RequestRideService {
   }
 
   async getRideRequest(rideId: string) {
-    const response = await fetch(`https://matching-service.orangeisland-6a81a8cf.westeurope.azurecontainerapps.io/rideRequest/${rideId}`, {
+    const response = await fetch(`http://localhost:8080/rideRequest/${rideId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ export class RequestRideService {
 
 
   async setContractAddress(rideId: string, contractAddress: string) {
-    const response = await fetch(`http:localhost:8080/${rideId}/${contractAddress}`, {
+    const response = await fetch(`http://localhost:8080/setContractAddress/${rideId}/${contractAddress}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
