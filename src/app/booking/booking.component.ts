@@ -39,6 +39,7 @@ export class BookingComponent {
   passengerCount: number = 0;
   rating: number = 0;
   auctionResult: number = 0;
+  auctionWinner: string = "";
 
   rideSearchStatus: boolean = false;
   rideProviderAcceptedStatus: boolean | null = false;
@@ -116,6 +117,7 @@ export class BookingComponent {
           this.estimatedArrivalTime = respone.bid.estimatedArrivalTime;
           this.passengerCount = respone.bid.passengerCount;
           this.rating = respone.bid.rating;
+          this.auctionWinner = respone.rideRequest.auctionWinner;
           this.auctionResult = respone.rideRequest.winningBid;
           console.log("Auction Result: ", this.auctionResult);
           this.auctionResultInWai = this.convertEurosToWei(this.auctionResult);

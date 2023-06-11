@@ -7,14 +7,16 @@
 </div>
 
 <div *ngIf="rideSearchStatus && !rideContractAddress && rideFoundStatus && !offerExpired">
-  <div><h1>Countdown Timer: {{ bookingTimer }}</h1></div>
+  <div>
+    <h1 class="rideDetailsTextHeader" style="color: red;">Offer valid for {{ bookingTimer }} seconds</h1>
+  </div>
   <div class="rideDetails" >
-    <p class="rideDetailsTextHeader">Your Ride:</p>
-    <p class="rideDetailsText">Amount:&emsp;&nbsp;&emsp;&nbsp;{{ auctionResult }} €</p>
-    <p class="rideDetailsText">Estimated Arrival Time:&emsp;&nbsp;&emsp;&nbsp;{{ estimatedArrivalTime }}</p>
-    <p class="rideDetailsText">Model:&emsp;&nbsp;&emsp;&nbsp;{{ model }}</p>
-    <p class="rideDetailsText">Passenger Count:&emsp;&nbsp;&emsp;&nbsp;{{ passengerCount }}</p>
-    <p class="rideDetailsText">Rating:&emsp;&nbsp;&emsp;&nbsp;{{ rating }}</p>
+    <p class="rideDetailsTextHeader">Your Ride: {{ auctionWinner }}</p>
+    <p class="rideDetailsText">Amount: {{ auctionResult }} €</p>
+    <p class="rideDetailsText">Estimated Arrival Time: {{ estimatedArrivalTime }}</p>
+    <p class="rideDetailsText">Model: {{ model }}</p>
+    <p class="rideDetailsText">Passenger Count: {{ passengerCount }}</p>
+    <p class="rideDetailsText">Rating: {{ rating }}</p>
   </div>
   <button  id="bookRideButton" (click)="bookRide()">Book Ride</button>
   <button (click)="bookNewRide()">Back</button>
