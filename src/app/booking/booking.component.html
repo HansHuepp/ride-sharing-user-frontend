@@ -6,10 +6,11 @@
   <button class="cancel-button" (click)="cancelBooking()">Cancel</button>
 </div>
 
-<div *ngIf="rideSearchStatus && !rideContractAddress && rideFoundStatus">
+<div *ngIf="rideSearchStatus && !rideContractAddress && rideFoundStatus && !offerExpired">
+  <div><h1>Countdown Timer: {{ bookingTimer }}</h1></div>
   <div class="rideDetails" >
     <p class="rideDetailsTextHeader">Your Ride:</p>
-    <p class="rideDetailsText">Amount:&emsp;&nbsp;&emsp;&nbsp;{{ amount }} €</p>
+    <p class="rideDetailsText">Amount:&emsp;&nbsp;&emsp;&nbsp;{{ auctionResult }} €</p>
     <p class="rideDetailsText">Estimated Arrival Time:&emsp;&nbsp;&emsp;&nbsp;{{ estimatedArrivalTime }}</p>
     <p class="rideDetailsText">Model:&emsp;&nbsp;&emsp;&nbsp;{{ model }}</p>
     <p class="rideDetailsText">Passenger Count:&emsp;&nbsp;&emsp;&nbsp;{{ passengerCount }}</p>
@@ -19,10 +20,18 @@
   <button (click)="bookNewRide()">Back</button>
 </div>
 
-<div *ngIf="rideSearchStatus && !rideContractAddress && !rideFoundStatus">
+<div *ngIf="rideSearchStatus && !rideContractAddress && !rideFoundStatus && !offerExpired">
   <div class="rideDetails" >
     <p class="rideDetailsTextHeader">Sorry we could not find a ride for you</p>
     <p class="rideDetailsText">Please try later again</p>
+  </div>
+  <button (click)="bookNewRide()">Back</button>
+</div>
+
+<div *ngIf="offerExpired && !rideContractAddress">
+  <div class="rideDetails" >
+    <p class="rideDetailsTextHeader">Sorry your ride offer expired</p>
+    <p class="rideDetailsText">Please try again</p>
   </div>
   <button (click)="bookNewRide()">Back</button>
 </div>

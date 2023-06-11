@@ -84,14 +84,14 @@ export class RequestRideService {
 
 
   async setContractAddress(rideId: string, contractAddress: string) {
+    console.log("This is URL is called", `http://localhost:8080/setContractAddress/${rideId}/${contractAddress}`)
     const response = await fetch(`http://localhost:8080/setContractAddress/${rideId}/${contractAddress}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
     })
-    return await response.json();
-
+    return response;
   }
 }
 

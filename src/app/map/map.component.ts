@@ -38,7 +38,6 @@ export class MapComponent implements OnInit {
   rideCost = '';
   rideDistance: any;
   rideDuration: number | null = 0;
-  auctionPrice = '';
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -63,9 +62,6 @@ export class MapComponent implements OnInit {
     });
     this.sharedService.getRideDuration().subscribe(value => {
       this.rideDuration = value;
-    });
-    this.sharedService.getAuctionResult().subscribe(value => {
-      this.auctionPrice = value;
     });
   }
 
@@ -154,9 +150,6 @@ routeFoundSwitch() {
 async startBooking() {
   console.log('Login button clicked');
   this.router.navigate(['/booking']);
-  const auctionResultInWei = 100;
-  console.log("Amount in WEI: ", auctionResultInWei);
-  this.sharedService.updateAuctionResult(auctionResultInWei.toString());
 }
 
 

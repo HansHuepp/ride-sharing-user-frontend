@@ -1,4 +1,3 @@
-import { AppModule } from './../app.module';
 import { Component, ChangeDetectorRef } from '@angular/core';
 import Web3 from 'web3';
 import  Contract from 'web3'
@@ -8,9 +7,7 @@ import contractAbi from '../abi-files/contractAbi.json' ;
 import { SharedService } from '../services/shared.service';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { Observable, find } from "rxjs";
 import { RequestRideService } from '../services/request-ride.service';
-import { TmplAstRecursiveVisitor } from '@angular/compiler';
 declare let window:any;
 
 @Component({
@@ -25,7 +22,7 @@ export class BookingComponent {
 
 
 
-  web3: Web3 | undefined | null;
+  web3: Web3 | any;
   myAddress: string  = "";
   myBalance: string  = "";
 
@@ -41,7 +38,7 @@ export class BookingComponent {
   estimatedArrivalTime: number = 0;
   passengerCount: number = 0;
   rating: number = 0;
-  amount: number = 0;
+  auctionResult: number = 0;
 
   rideSearchStatus: boolean = false;
   rideProviderAcceptedStatus: boolean | null = false;
@@ -50,12 +47,16 @@ export class BookingComponent {
   rideProviderArrivedAtDropoffLocation: boolean = false;
   rideMarkedComplete: boolean = false;
   rideProviderCanceldRide: boolean = false;
-  auctionResult: string = "";
+  auctionResultInWai: string = "";
 
   pickupLocationCoordinates: [number, number] | any;
   dropoffLocationCoordinates: [number, number] | any;
   pickupLocationCoordinatesGrid: [number, number] | any;
   dropoffLocationCoordinatesGrid: [number, number] | any;
+
+  bookingTimer: number = 30;
+  interval: any;
+  offerExpired: boolean = false;
 
   async ngOnInit() {
     console.log(this.rideContractAddress);
@@ -67,9 +68,6 @@ export class BookingComponent {
     });
     this.sharedService.getWeb3().subscribe(value => {
       this.web3 = value;
-    });
-    this.sharedService.getAuctionResult().subscribe(value => {
-      this.auctionResult = value;
     });
     this.sharedService.getPickupLocationCoordinates().subscribe(value => {
       this.pickupLocationCoordinates = value;
@@ -97,13 +95,12 @@ export class BookingComponent {
     await this.requestRide.requestRide().then((rideId: string) => {
       console.log('Ride ID:', rideId);
       this.rideId = rideId;
-      //wait 1 minute
       setTimeout(async () => {
         const respone = await this.requestRide.getRideRequest(rideId);
         console.log("Response: ", JSON.stringify(respone));
         this.rideSearchStatus = true
         this.cdr.detectChanges();
-        if(respone.rideRequest.winningBid == null)
+        if (!respone.bid)
         {
           console.log("No ride found");
           this.rideFoundStatus = false;
@@ -114,16 +111,18 @@ export class BookingComponent {
         {
           console.log("Ride found");
           this.rideFoundStatus = true;
+          this.runCountdown();
           this.model = respone.bid.model;
           this.estimatedArrivalTime = respone.bid.estimatedArrivalTime;
           this.passengerCount = respone.bid.passengerCount;
           this.rating = respone.bid.rating;
-          this.amount = respone.rideRequest.auctionWinner;
-          console.log("Amount: ", this.amount);
-          console.log("Model: ", this.model);
+          this.auctionResult = respone.rideRequest.winningBid;
+          console.log("Auction Result: ", this.auctionResult);
+          this.auctionResultInWai = this.convertEurosToWei(this.auctionResult);
+          console.log("Auction Result in Wei: ", this.auctionResultInWai);
           this.cdr.detectChanges();
         }
-      }, 70100)});
+      }, 40000)});
   }
 
 
@@ -134,6 +133,16 @@ export class BookingComponent {
     } catch (err) {
       console.error('Failed to copy text: ', err);
     }
+  }
+
+  async runCountdown() {
+    this.interval = setInterval(() => {
+      this.bookingTimer--;
+      if (this.bookingTimer === 0) {
+        clearInterval(this.interval);
+        this.offerExpired = true;
+      }
+    }, 1000);
   }
 
   async bookRide() {
@@ -155,12 +164,12 @@ export class BookingComponent {
     // Call the createContract function
     const party1Signature = '0xe382c6fbda9a7cafb4825dd04c2d5c10055da82c1a9dfcf761f6ccaffc7b2c1b';
     const gasEstimate = await this.contractFactory.methods
-      .createContract(party1Signature, this.auctionResult)
-      .estimateGas({ from: selectedAddress, value: this.auctionResult });
+      .createContract(party1Signature, this.auctionResultInWai)
+      .estimateGas({ from: selectedAddress, value: this.auctionResultInWai });
 
     this.contractFactory.methods
-      .createContract(party1Signature, this.auctionResult)
-      .send({ from: selectedAddress, gas: gasEstimate, value: this.auctionResult })
+      .createContract(party1Signature, this.auctionResultInWai)
+      .send({ from: selectedAddress, gas: gasEstimate, value: this.auctionResultInWai })
       .on('transactionHash', (hash: string) => {
         console.log('Transaction hash:', hash);
       })
@@ -170,7 +179,7 @@ export class BookingComponent {
         this.rideContractAddress = receipt.events.ContractCreated.returnValues.newContract;
         console.log('Ride Contract Address:', this.rideContractAddress);
         console.log('sending Contract Address to backend');
-        this.sendContractAddress(this.rideContractAddress)
+        //this.sendContractAddress(this.rideContractAddress)
 
         // Start listening for updates
         console.log('Start listening for updates');
@@ -185,6 +194,7 @@ export class BookingComponent {
       });
   }
 
+  /*
    sendContractAddress(contractAddress:string): void {
     fetch('http://localhost:3000/startRide', {
       method: 'POST',
@@ -194,6 +204,7 @@ export class BookingComponent {
       body: JSON.stringify({ contractAddress: contractAddress }),
     })
   }
+  */
 
   async setUserReadyToStartRide(){
     const userReadyToStartRideMessage = "Ready to start ride"
@@ -231,7 +242,6 @@ export class BookingComponent {
       .on('error', (error: Error) => {
         console.error('Error:', error);
       });
-
   }
 
   async cancelRide(){
@@ -357,6 +367,13 @@ export class BookingComponent {
     .on('error', console.error);
   }
 
+  convertEurosToWei(amountInEuros: number){
+    const etherPriceInEuros = 1706;
+    const amountInEther = amountInEuros / etherPriceInEuros;
+    const amountInWei = this.web3.utils.toWei(amountInEther.toString(), 'ether');
+    return amountInWei;
+}
+
   cancelBooking() {
     this.router.navigate(['/map']);
   }
@@ -364,4 +381,6 @@ export class BookingComponent {
   bookNewRide() {
     this.router.navigate(['/']);
   }
+
+
 }
