@@ -19,14 +19,11 @@ export class BookingComponent {
 
   constructor(private requestRide: RequestRideService, private cdr: ChangeDetectorRef, private sharedService: SharedService, private router: Router, private http: HttpClient) { }
 
-
-
-
   web3: Web3 | any;
   myAddress: string  = "";
   myBalance: string  = "";
 
-  contractFactoryAddress = '0x13e15147495bE38c7EDd1466454B421c45A839CA';
+  contractFactoryAddress = '0xa7bE1957872058Ab921646F715bee2062F9eC081';
   contractFactory: Contract | undefined | any;
 
   rideContractAddress: string | null | any= null;
@@ -164,13 +161,12 @@ export class BookingComponent {
     );
 
     // Call the createContract function
-    const party1Signature = '0xe382c6fbda9a7cafb4825dd04c2d5c10055da82c1a9dfcf761f6ccaffc7b2c1b';
     const gasEstimate = await this.contractFactory.methods
-      .createContract(party1Signature, this.auctionResultInWai)
+      .createContract( this.auctionResultInWai)
       .estimateGas({ from: selectedAddress, value: this.auctionResultInWai });
 
     this.contractFactory.methods
-      .createContract(party1Signature, this.auctionResultInWai)
+      .createContract( this.auctionResultInWai)
       .send({ from: selectedAddress, gas: gasEstimate, value: this.auctionResultInWai })
       .on('transactionHash', (hash: string) => {
         console.log('Transaction hash:', hash);
