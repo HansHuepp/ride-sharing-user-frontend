@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SharedService } from '../services/shared.service';
+import * as elliptic from 'elliptic';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,7 @@ export class RequestRideService {
   dropoffLocationCoordinates: [number, number] | any;
   pickupLocationCoordinatesGrid: [number, number] | any;
   dropoffLocationCoordinatesGrid: [number, number] | any;
+  myPublicKey: string = "";
 
   constructor(private sharedService: SharedService) { }
 
@@ -25,6 +27,9 @@ export class RequestRideService {
     });
     this.sharedService.getDropoffLocationCoordinatesGrid().subscribe(value => {
       this.dropoffLocationCoordinatesGrid = value;
+    });
+    this.sharedService.getMyPublicKey().subscribe(value => {
+      this.myPublicKey = value;
     });
   }
 
@@ -47,6 +52,7 @@ export class RequestRideService {
 
 
   async requestRide() {
+    this.generateKeyPair();
     const rideRequestBody: any = {
       userId: '12345',
       pickupLocation: {
@@ -57,7 +63,8 @@ export class RequestRideService {
         type: 'Point',
         coordinates: this.dropoffLocationCoordinatesGrid
       },
-      rating: 4.5
+      rating: 4.5,
+      userPublicKey: this.myPublicKey
     };
 
     const response = await fetch('http://localhost:8080/requestRide', {
@@ -93,6 +100,17 @@ export class RequestRideService {
     })
     return response;
   }
+
+  generateKeyPair(): void {
+    const ec = new elliptic.ec('secp256k1');
+    const keyPair = ec.genKeyPair();
+
+    const publicKey = keyPair.getPublic('hex');
+    const privateKey = keyPair.getPrivate('hex');
+    this.sharedService.updateMyPublicKey(publicKey);
+    this.sharedService.updateMyPrivateKey(privateKey);
+  }
+
 }
 
 

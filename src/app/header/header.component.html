@@ -10,7 +10,11 @@
   <!-- Menu items go here -->
   <a *ngIf="myAddress">Wallet ID: <span [innerHTML]="myAddressShort"></span></a>
   <a class="burger-menu-border-bottom" *ngIf="myAddress">Balance: <span [innerHTML]="myBalance"></span> €</a>
+  <a class="burger-menu-border-bottom"> My Rating: <span [innerHTML]="myRating"></span></a>
   <a class="burger-menu-border-bottom" *ngIf="!myAddress" (click)="connectWallet()">Connect Wallet</a>
-  <a class="burger-menu-border-bottom">Settings</a>
+  <a class="burger-menu-border-bottom" (click)="toggleSettings()">Settings</a>
+  <app-settings *ngIf="showSettings"></app-settings>
+  <app-rating></app-rating>
 </div>
+
 

@@ -19,6 +19,10 @@ export class HeaderComponent {
   myAddress: string  = "";
   myAddressShort: string = "";
   myBalance: string = "";
+  myRating: number = 0;
+  showSettings: boolean = false;
+
+
 
   async ngOnInit() {
     this.sharedService.getMyAddress().subscribe(value => {
@@ -32,6 +36,9 @@ export class HeaderComponent {
     });
     this.sharedService.getWeb3().subscribe(value => {
       this.web3 = value;
+    });
+    this.sharedService.getMaxUserRating().subscribe(value => {
+      this.myRating = value;
     });
 
     await this.connectWalletService.connectWallet();
@@ -47,5 +54,9 @@ export class HeaderComponent {
 
   toggleBurgerMenu() {
     this.showBurgerMenu = !this.showBurgerMenu;
+  }
+
+  toggleSettings() {
+    this.showSettings = !this.showSettings;
   }
 }

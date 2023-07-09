@@ -22,6 +22,107 @@ export class SharedService {
 
   private auctionResult = new BehaviorSubject<string>("");
 
+  private maxUserRating = new BehaviorSubject<number>(4.6);
+  private userRating = new BehaviorSubject<number>(4.2);
+  private minRating = new BehaviorSubject<number>(4);
+  private maxPassengers = new BehaviorSubject<number>(2);
+  private maxWaitingTime = new BehaviorSubject<number>(15);
+
+  private myPublicKey = new BehaviorSubject<string>("");
+  private myPrivateKey = new BehaviorSubject<string>("");
+  private sharedPrime = new BehaviorSubject<number>(0);
+  private sharedGenerator = new BehaviorSubject<number>(0);
+  private sharedSecret = new BehaviorSubject<string>("");
+  private vehiclePublicKey = new BehaviorSubject<string>("");
+
+  getVehiclePublicKey() {
+    return this.vehiclePublicKey.asObservable();
+  }
+
+  updateVehiclePublicKey(newValue: string) {
+    this.vehiclePublicKey.next(newValue);
+  }
+
+  getSharedPrime() {
+    return this.sharedPrime.asObservable();
+  }
+
+  updateSharedPrime(newValue: number) {
+    this.sharedPrime.next(newValue);
+  }
+
+  getSharedGenerator() {
+    return this.sharedGenerator.asObservable();
+  }
+
+  updateSharedGenerator(newValue: number) {
+    this.sharedGenerator.next(newValue);
+  }
+
+  getSharedSecret() {
+    return this.sharedSecret.asObservable();
+  }
+
+  updateSharedSecret(newValue: string) {
+    this.sharedSecret.next(newValue);
+  }
+
+  getMyPublicKey() {
+    return this.myPublicKey.asObservable();
+  }
+
+  updateMyPublicKey(newValue: string) {
+    this.myPublicKey.next(newValue);
+  }
+
+  getMyPrivateKey() {
+    return this.myPrivateKey.asObservable();
+  }
+
+  updateMyPrivateKey(newValue: string) {
+    this.myPrivateKey.next(newValue);
+  }
+
+  getMaxUserRating() {
+    return this.maxUserRating.asObservable();
+  }
+
+  updateMaxUserRating(newValue: number) {
+    this.maxUserRating.next(newValue);
+  }
+
+  getUserRating() {
+    return this.userRating.asObservable();
+  }
+
+  updateUserRating(newValue: number) {
+    this.userRating.next(newValue);
+  }
+
+  getMinRating() {
+    return this.minRating.asObservable();
+  }
+
+  updateMinRating(newValue: number) {
+    this.minRating.next(newValue);
+  }
+
+  getMaxPassengers() {
+    return this.maxPassengers.asObservable();
+  }
+
+  updateMaxPassengers(newValue: number) {
+    this.maxPassengers.next(newValue);
+  }
+
+  getMaxWaitingTime() {
+    return this.maxWaitingTime.asObservable();
+  }
+
+  updateMaxWaitingTime(newValue: number) {
+    this.maxWaitingTime.next(newValue);
+  }
+
   getPickupLocationCoordinates() {
     return this.pickupLocationCoordinates.asObservable();
   }

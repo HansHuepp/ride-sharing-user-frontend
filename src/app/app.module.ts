@@ -15,6 +15,8 @@ import { FooterComponent } from './footer/footer.component';
 import { LoadingComponent } from './loading/loading.component';
 
 import { HttpClientModule } from '@angular/common/http';
+import { SettingsComponent } from './settings/settings.component';
+import { RatingComponent } from './rating/rating.component';
 
 
 @NgModule({
@@ -28,6 +30,8 @@ import { HttpClientModule } from '@angular/common/http';
     HeaderComponent,
     FooterComponent,
     LoadingComponent,
+    SettingsComponent,
+    RatingComponent,
 
   ],
   imports: [

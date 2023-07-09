@@ -8,6 +8,8 @@ import { SharedService } from '../services/shared.service';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { RequestRideService } from '../services/request-ride.service';
+
+
 declare let window:any;
 
 @Component({
@@ -23,7 +25,7 @@ export class BookingComponent {
   myAddress: string  = "";
   myBalance: string  = "";
 
-  contractFactoryAddress = '0xa7bE1957872058Ab921646F715bee2062F9eC081';
+  contractFactoryAddress = '0x56398266C2B6a0656911ebd5a83B3b91499F6D54';
   contractFactory: Contract | undefined | any;
 
   rideContractAddress: string | null | any= null;
@@ -120,6 +122,11 @@ export class BookingComponent {
           this.auctionResultInWai = this.convertEurosToWei(this.auctionResult);
           console.log("Auction Result in Wei: ", this.auctionResultInWai);
           this.cdr.detectChanges();
+          this.sharedService.updateSharedPrime(respone.rideRequest.sharedPrime);
+          this.sharedService.updateSharedGenerator(respone.rideRequest.sharedGenerator);
+          this.sharedService.updateVehiclePublicKey(respone.bid.vehiclePublicKey);
+
+
         }
       }, 40000)});
   }
@@ -370,7 +377,7 @@ export class BookingComponent {
     const amountInEther = amountInEuros / etherPriceInEuros;
     const amountInWei = this.web3.utils.toWei(amountInEther.toString(), 'ether');
     return amountInWei;
-}
+  }
 
   cancelBooking() {
     this.router.navigate(['/map']);

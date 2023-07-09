@@ -1,0 +1,19 @@
+<div>
+  <p>Shared Rating {{ userRating }}</p>
+  <input type="range" min="0" max="{{ maxUserRating }}" step="0.1" [(ngModel)]="userRating" (ngModelChange)="updateUserRating()">
+</div>
+
+<div>
+  <p>Min. Ride Provider Rating: {{ minRating }}</p>
+  <input type="range" min="0" max="5" step="0.1" [(ngModel)]="minRating" (ngModelChange)="updateMinRating()">
+</div>
+
+<div>
+  <p>Max. Passengers: {{ maxPassengers }}</p>
+  <input type="range" min="0" max="9" step="1" [(ngModel)]="maxPassengers" (ngModelChange)="updateMaxPassengers()">
+</div>
+
+<div>
+  <p>Max Waiting Time: {{ maxWaitingTime }} minutes</p>
+  <input type="range" min="5" max="60" step="5" [(ngModel)]="maxWaitingTime" (ngModelChange)="updateMaxWaitingTime()">
+</div>
