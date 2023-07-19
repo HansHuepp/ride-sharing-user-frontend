@@ -208,7 +208,7 @@ fitMapToBounds(pickup: [number, number], dropoff: [number, number]) {
   findRide(pickupLocation: string, dropoffLocation: string): Observable<any> {
     const body = JSON.stringify({ pickupLocation, dropoffLocation });
 
-    return this.http.post('https://matching-service.azurewebsites.net/findRide', body, this.httpOptions)
+    return this.http.post('http://localhost/findRide', body, this.httpOptions)
     .pipe(
       tap(_ => console.log('found ride')),
       catchError(this.handleError<any>('findRide'))
@@ -216,7 +216,7 @@ fitMapToBounds(pickup: [number, number], dropoff: [number, number]) {
   }
 
   getStatus(): Observable<any> {
-    return this.http.get('https://matching-service.azurewebsites.net/health', this.httpOptions)
+    return this.http.get('http://localhost/health', this.httpOptions)
     .pipe(
       tap(_ => console.log('checked status')),
       catchError(this.handleError<any>('getStatus'))

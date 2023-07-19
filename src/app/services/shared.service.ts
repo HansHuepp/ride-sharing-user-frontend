@@ -27,6 +27,7 @@ export class SharedService {
   private minRating = new BehaviorSubject<number>(4);
   private maxPassengers = new BehaviorSubject<number>(2);
   private maxWaitingTime = new BehaviorSubject<number>(15);
+  private minPassengerRating = new BehaviorSubject<number>(4);
 
   private myPublicKey = new BehaviorSubject<string>("");
   private myPrivateKey = new BehaviorSubject<string>("");
@@ -34,6 +35,24 @@ export class SharedService {
   private sharedGenerator = new BehaviorSubject<number>(0);
   private sharedSecret = new BehaviorSubject<string>("");
   private vehiclePublicKey = new BehaviorSubject<string>("");
+
+  private rating = new BehaviorSubject<number>(0);
+
+  getRating() {
+    return this.rating.asObservable();
+  }
+
+  updateRating(newValue: number) {
+    this.rating.next(newValue);
+  }
+
+  getMinPassengerRating() {
+    return this.minPassengerRating.asObservable();
+  }
+
+  updateMinPassengerRating(newValue: number) {
+    this.minPassengerRating.next(newValue);
+  }
 
   getVehiclePublicKey() {
     return this.vehiclePublicKey.asObservable();

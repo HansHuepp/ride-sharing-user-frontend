@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import * as h3 from "h3-js";
 import { SharedService } from '../services/shared.service';
 import * as elliptic from 'elliptic';
 
@@ -13,9 +14,13 @@ export class RequestRideService {
   dropoffLocationCoordinatesGrid: [number, number] | any;
   myPublicKey: string = "";
 
-  constructor(private sharedService: SharedService) { }
+  maxUserRating:number = 0;
+  minRating:number = 0;
+  maxPassengers:number = 0;
+  maxWaitingTime:number = 0;
+  minPassengerRating:number = 0;
 
-  ngOnInit() {
+  constructor(private sharedService: SharedService) {
     this.sharedService.getPickupLocationCoordinates().subscribe(value => {
       this.pickupLocationCoordinates = value;
     });
@@ -31,7 +36,28 @@ export class RequestRideService {
     this.sharedService.getMyPublicKey().subscribe(value => {
       this.myPublicKey = value;
     });
+    this.sharedService.getMaxUserRating().subscribe(value => {
+      this.maxUserRating = value;
+    });
+    this.sharedService.getMinRating().subscribe(value => {
+      this.minRating = value;
+    });
+    this.sharedService.getMaxPassengers().subscribe(value => {
+      this.maxPassengers = value;
+    });
+    this.sharedService.getMaxWaitingTime().subscribe(value => {
+      this.maxWaitingTime = value;
+    });
+    this.sharedService.getMinPassengerRating().subscribe(value => {
+      this.minPassengerRating = value;
+    });
+
+
   }
+
+
+
+
 
   async  toGridRideLocation(rideLocation: any, gridSize: number = 0.01): Promise<any> {
     const gridPickupLatitude = Math.round(rideLocation.pickupLocationCoordinates[0] / gridSize) * gridSize;
@@ -63,8 +89,14 @@ export class RequestRideService {
         type: 'Point',
         coordinates: this.dropoffLocationCoordinatesGrid
       },
-      rating: 4.5,
-      userPublicKey: this.myPublicKey
+      gridLocation: this.getGridLocation(this.pickupLocationCoordinatesGrid, 10),
+      rating: this.maxUserRating,
+      userPublicKey: this.myPublicKey,
+      maxUserRating: this.maxUserRating,
+      minRating: this.minRating,
+      maxPassengers: this.maxPassengers,
+      maxWaitingTime: this.maxWaitingTime,
+      minPassengerRating: this.minPassengerRating
     };
 
     const response = await fetch('http://localhost:8080/requestRide', {
@@ -100,6 +132,12 @@ export class RequestRideService {
     })
     return response;
   }
+
+  getGridLocation(coordinates: [number, number], resolution: number) {
+    return h3.latLngToCell(coordinates[0],coordinates[1],resolution);
+  }
+
+
 
   generateKeyPair(): void {
     const ec = new elliptic.ec('secp256k1');

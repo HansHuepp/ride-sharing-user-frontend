@@ -1,4 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { SharedService } from '../services/shared.service';
 
 @Component({
   selector: 'app-rating',
@@ -6,21 +7,16 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./rating.component.css']
 })
 
-export class RatingComponent implements OnInit {
+export class RatingComponent {
+
+  constructor(private sharedService: SharedService) { }
 
   stars: number[] = [1, 2, 3, 4, 5];
   selectedValue: number = 0;
 
-  @Output() ratingClick: EventEmitter<any> = new EventEmitter<any>();
-
-  ngOnInit() {
-  }
 
   handleClick(star: number) {
     this.selectedValue = star;
-  }
-
-  submitRating() {
-    this.ratingClick.emit(this.selectedValue);
+    this.sharedService.updateRating(this.selectedValue);
   }
 }

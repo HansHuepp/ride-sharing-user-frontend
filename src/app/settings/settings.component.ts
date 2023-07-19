@@ -14,7 +14,8 @@ export class SettingsComponent {
   userRating: number = 0;
   minRating: number = 0;
   maxPassengers: number = 0;
-  maxWaitingTime: number = 5;
+  maxWaitingTime: number = 0;
+  minPassengerRating: number = 0;
 
   async ngOnInit() {
     this.sharedService.getMaxUserRating().subscribe(value => {
@@ -32,6 +33,13 @@ export class SettingsComponent {
     this.sharedService.getMaxWaitingTime().subscribe(value => {
       this.maxWaitingTime = value;
     });
+    this.sharedService.getMinPassengerRating().subscribe(value => {
+      this.minPassengerRating = value;
+    });
+  }
+
+  updateMinPassengerRating() {
+    this.sharedService.updateMinPassengerRating(this.minPassengerRating);
   }
 
   updateMaxUserRating() {

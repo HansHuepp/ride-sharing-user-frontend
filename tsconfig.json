@@ -4,6 +4,7 @@
 
   "compilerOptions": {
     "resolveJsonModule": true,
+    "types": ["node"],
     "esModuleInterop": true,
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",

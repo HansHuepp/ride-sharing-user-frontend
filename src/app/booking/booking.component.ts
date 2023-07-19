@@ -9,7 +9,6 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { RequestRideService } from '../services/request-ride.service';
 
-
 declare let window:any;
 
 @Component({
@@ -25,7 +24,7 @@ export class BookingComponent {
   myAddress: string  = "";
   myBalance: string  = "";
 
-  contractFactoryAddress = '0x56398266C2B6a0656911ebd5a83B3b91499F6D54';
+  contractFactoryAddress = '0x22F620DDd850c21e59571AA3cfA310CC470b6Edc';
   contractFactory: Contract | undefined | any;
 
   rideContractAddress: string | null | any= null;
@@ -58,8 +57,15 @@ export class BookingComponent {
   interval: any;
   offerExpired: boolean = false;
 
+  userRatingForRide = 0;
+
   async ngOnInit() {
     console.log(this.rideContractAddress);
+
+    this.sharedService.getRating().subscribe(value => {
+      this.userRatingForRide = value;
+    });
+
     this.sharedService.getMyAddress().subscribe(value => {
       this.myAddress = value;
     });
@@ -199,18 +205,6 @@ export class BookingComponent {
       });
   }
 
-  /*
-   sendContractAddress(contractAddress:string): void {
-    fetch('http://localhost:3000/startRide', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ contractAddress: contractAddress }),
-    })
-  }
-  */
-
   async setUserReadyToStartRide(){
     const userReadyToStartRideMessage = "Ready to start ride"
     console.log("Adresse: ",this.rideContractAddress)
@@ -327,6 +321,44 @@ export class BookingComponent {
       });
   }
 
+  async rateRide(){
+
+    if (!this.web3) {
+      console.error('MetaMask not connected');
+      return;
+    }
+
+    const accounts = await this.web3.eth.getAccounts();
+    const selectedAddress = accounts[0];
+
+    // Initialize the contract instance
+    this.contractFactory = new this.web3.eth.Contract(
+      contractAbi as AbiItem[],
+      this.rideContractAddress,
+    );
+
+    // Call the createContract function
+    const gasEstimate = await this.contractFactory.methods
+      .setRideRating(this.userRatingForRide)
+      .estimateGas({ from: selectedAddress });
+
+    this.contractFactory.methods
+      .setRideRating(this.userRatingForRide)
+      .send({ from: selectedAddress, gas: gasEstimate })
+      .on('transactionHash', (hash: string) => {
+        console.log('Transaction hash:', hash);
+      })
+      .on('receipt', (receipt: any) => {
+        console.log('Transaction receipt events:', receipt);
+        this.rideMarkedComplete = true;
+        this.cdr.detectChanges();
+      })
+
+      .on('error', (error: Error) => {
+        console.error('Error:', error);
+      });
+  }
+
   async listenForUpdates() {
     if (!this.web3 || !this.rideContractAddress) {
       console.error('MetaMask not connected or ride contract address not set');
@@ -385,6 +417,15 @@ export class BookingComponent {
 
   bookNewRide() {
     this.router.navigate(['/']);
+  }
+
+  calculateSharedSecret() {
+    const publicKey: any = this.sharedService.getMyPublicKey();
+    const privateKey: any = this.sharedService.getMyPrivateKey();
+    const sharedPrime: any = this.sharedService.getSharedPrime();
+    const sharedGenerator: any = this.sharedService.getSharedGenerator();
+
+   // console.log('Shared secret:', sharedSecret);
   }
 
 

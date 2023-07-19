@@ -9,6 +9,11 @@
 </div>
 
 <div>
+  <p>Min. Passanger Rating: {{ minPassengerRating }}</p>
+  <input type="range" min="0" max="5" step="0.1" [(ngModel)]="minPassengerRating" (ngModelChange)="updateMinPassengerRating()">
+</div>
+
+<div>
   <p>Max. Passengers: {{ maxPassengers }}</p>
   <input type="range" min="0" max="9" step="1" [(ngModel)]="maxPassengers" (ngModelChange)="updateMaxPassengers()">
 </div>
