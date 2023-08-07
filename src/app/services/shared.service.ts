@@ -36,14 +36,33 @@ export class SharedService {
   private sharedSecret = new BehaviorSubject<string>("");
   private vehiclePublicKey = new BehaviorSubject<string>("");
 
+  private rideContractAddress = new BehaviorSubject<string | null | any>(null);
+
+  private passengers = new BehaviorSubject<Object[]>([]);
+
   private rating = new BehaviorSubject<number>(0);
 
   getRating() {
     return this.rating.asObservable();
   }
-
   updateRating(newValue: number) {
     this.rating.next(newValue);
+  }
+
+  getRideContractAddress() {
+    return this.rideContractAddress.asObservable();
+  }
+
+  updateRideContractAddress(newValue: string) {
+    this.rideContractAddress.next(newValue);
+  }
+
+  getPassengers() {
+    return this.passengers.asObservable();
+  }
+
+  updatePassengers(newValue: Object[]) {
+    this.passengers.next(newValue);
   }
 
   getMinPassengerRating() {

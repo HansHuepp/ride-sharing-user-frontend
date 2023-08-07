@@ -24,7 +24,7 @@ export class BookingComponent {
   myAddress: string  = "";
   myBalance: string  = "";
 
-  contractFactoryAddress = '0x22F620DDd850c21e59571AA3cfA310CC470b6Edc';
+  contractFactoryAddress = '0x229b8E5cC722072C7d2346A5d98A20BF9d2A2F56';
   contractFactory: Contract | undefined | any;
 
   rideContractAddress: string | null | any= null;
@@ -59,11 +59,16 @@ export class BookingComponent {
 
   userRatingForRide = 0;
 
+  passengers: Object[] = [];
+
   async ngOnInit() {
     console.log(this.rideContractAddress);
 
     this.sharedService.getRating().subscribe(value => {
       this.userRatingForRide = value;
+    });
+    this.sharedService.getPassengers().subscribe(value => {
+      this.passengers = value;
     });
 
     this.sharedService.getMyAddress().subscribe(value => {
@@ -87,6 +92,11 @@ export class BookingComponent {
     this.sharedService.getDropoffLocationCoordinatesGrid().subscribe(value => {
       this.dropoffLocationCoordinatesGrid = value;
     });
+
+    this.sharedService.getRideContractAddress().subscribe(value => {
+      this.rideContractAddress = value;
+    });
+
 
     await this.findRide();
   }
@@ -187,7 +197,8 @@ export class BookingComponent {
       .on('receipt', async (receipt: any) => {
         console.log('Transaction receipt events:', receipt);
         // find the value newContract in receipt.events
-        this.rideContractAddress = receipt.events.ContractCreated.returnValues.newContract;
+        const myrideContractAddress = receipt.events.ContractCreated.returnValues.newContract;
+        this.sharedService.updateRideContractAddress(myrideContractAddress);
         console.log('Ride Contract Address:', this.rideContractAddress);
         console.log('sending Contract Address to backend');
         //this.sendContractAddress(this.rideContractAddress)
@@ -359,6 +370,34 @@ export class BookingComponent {
       });
   }
 
+  async getPassengers() {
+    if (!this.web3) {
+        console.error('MetaMask not connected');
+        return;
+    }
+
+    const accounts = await this.web3.eth.getAccounts();
+    const selectedAddress = accounts[0];
+
+    // Initialize the contract instance
+    this.rideContract = new this.web3.eth.Contract(
+        contractAbi as AbiItem[],
+        this.rideContractAddress,
+    );
+
+    try {
+        const passengers = await this.rideContract.methods
+            .passengers(0)
+            .call({ from: selectedAddress });
+
+        this.sharedService.updatePassengers(passengers);
+        console.log('Passenger list:', passengers);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+
   async listenForUpdates() {
     if (!this.web3 || !this.rideContractAddress) {
       console.error('MetaMask not connected or ride contract address not set');
@@ -373,7 +412,7 @@ export class BookingComponent {
 
     // Listen for UpdatePosted events
     contractInstance.events.allEvents()
-    .on('data', (event: any) => {
+    .on('data', async (event: any) => {
       const functionName = event.returnValues.functionName;
       console.log("Function Name: ", functionName);
 
@@ -397,6 +436,7 @@ export class BookingComponent {
       if(functionName == "rideProviderArrivedAtDropoffLocation"){
         this.rideProviderStartedRide = false;
         this.rideProviderArrivedAtDropoffLocation = true;
+        await this.getPassengers();
         this.cdr.detectChanges();
       }
 

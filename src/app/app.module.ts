@@ -17,6 +17,7 @@ import { LoadingComponent } from './loading/loading.component';
 import { HttpClientModule } from '@angular/common/http';
 import { SettingsComponent } from './settings/settings.component';
 import { RatingComponent } from './rating/rating.component';
+import { UserRatingComponent } from './user-rating/user-rating.component';
 
 
 @NgModule({
@@ -32,6 +33,7 @@ import { RatingComponent } from './rating/rating.component';
     LoadingComponent,
     SettingsComponent,
     RatingComponent,
+    UserRatingComponent,
 
   ],
   imports: [

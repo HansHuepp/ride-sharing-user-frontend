@@ -1,5 +1,16 @@
 [
 	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_matchingServiceAddress",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -35,6 +46,19 @@
 		"inputs": [
 			{
 				"internalType": "address",
+				"name": "_contractAddress",
+				"type": "address"
+			}
+		],
+		"name": "registerNewContract",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
 				"name": "user",
 				"type": "address"
 			}
@@ -45,6 +69,25 @@
 				"internalType": "contract Contract[]",
 				"name": "",
 				"type": "address[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "registeredContracts",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
 			}
 		],
 		"stateMutability": "view",

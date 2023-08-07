@@ -1,0 +1,39 @@
+
+  <button class="dropbtn" (click)="toggleDropdown()">Passenger Nr. {{ passengerNumber }}</button>
+  <div>
+    <p>Seating Position:</p>
+    <div class="seating-number-plate">
+      <div class="seating-buttons">
+        <button class="seating-button" [ngClass]="{'button2': seatingPosition === 1}">1</button>
+        <button class="seating-button">-</button>
+        <button class="seating-button" [ngClass]="{'button2': seatingPosition === 2}">2</button>
+        <button class="seating-button" [ngClass]="{'button2': seatingPosition === 3}">3</button>
+        <button class="seating-button" [ngClass]="{'button2': seatingPosition === 4}">4</button>
+        <button class="seating-button" [ngClass]="{'button2': seatingPosition === 5}">5</button>
+      </div>
+    </div>
+    <p>Started Ride at: {{startTime}}</p>
+    <p>Please rate the Passenger:</p>
+    <div class="center-text">
+    <div class="rate">
+      <input type="radio" id="star5" name="rate" [value]="5" [(ngModel)]="selectedValue" />
+      <label for="star5" title="text">5 stars</label>
+      <input type="radio" id="star4" name="rate" [value]="4" [(ngModel)]="selectedValue" />
+      <label for="star4" title="text">4 stars</label>
+      <input type="radio" id="star3" name="rate" [value]="3" [(ngModel)]="selectedValue" />
+      <label for="star3" title="text">3 stars</label>
+      <input type="radio" id="star2" name="rate" [value]="2" [(ngModel)]="selectedValue" />
+      <label for="star2" title="text">2 stars</label>
+      <input type="radio" id="star1" name="rate" [value]="1" [(ngModel)]="selectedValue" />
+      <label for="star1" title="text">1 star</label>
+    </div>
+  </div>
+    <button (click)="sendRating()">Send Rating</button>
+  </div>
+
+
+
+
+
+
+

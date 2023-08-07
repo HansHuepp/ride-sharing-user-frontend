@@ -15,7 +15,6 @@
 <div *ngIf="routeFound">
   <div class="logo-container">
     <p class="logo" [innerHTML]="rideDistanceAndDurcationString"></p>
-    <p class="logo" [innerHTML]="rideCost"></p>
   </div>
   <button (click)="startBooking()">Request Ride</button>
   <button (click)="routeFoundSwitch()">Back</button>

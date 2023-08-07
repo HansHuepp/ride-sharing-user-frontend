@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { SharedService } from '../services/shared.service';
 
 @Component({
@@ -8,6 +8,7 @@ import { SharedService } from '../services/shared.service';
 })
 
 export class RatingComponent {
+  @Output() valueChange = new EventEmitter();
 
   constructor(private sharedService: SharedService) { }
 
@@ -17,6 +18,6 @@ export class RatingComponent {
 
   handleClick(star: number) {
     this.selectedValue = star;
-    this.sharedService.updateRating(this.selectedValue);
+    this.valueChange.emit(this.selectedValue);
   }
 }

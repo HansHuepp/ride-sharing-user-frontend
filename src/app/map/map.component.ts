@@ -5,6 +5,10 @@ import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from "rxjs";
 import { catchError, tap } from 'rxjs/operators';
+import Web3 from 'web3';
+import  Contract from 'web3'
+import { AbiItem } from 'web3-utils';
+import matchingAbi from '../abi-files/matchingAbi.json' ;
 
 interface MapboxDirectionsResponse {
   routes: Route[];
@@ -39,6 +43,11 @@ export class MapComponent implements OnInit {
   rideDistance: any;
   rideDuration: number | null = 0;
 
+  web3: Web3 | any;
+  contract: Contract | undefined | any;
+  rideContractAddress: string | null | any= null;
+  matchingContractAddress: string = "0xf4C1668BcC9F33DcB1111e3bF5906DD0e454157D";
+
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
@@ -62,6 +71,9 @@ export class MapComponent implements OnInit {
     });
     this.sharedService.getRideDuration().subscribe(value => {
       this.rideDuration = value;
+    });
+    this.sharedService.getWeb3().subscribe(value => {
+      this.web3 = value;
     });
   }
 
@@ -148,10 +160,46 @@ routeFoundSwitch() {
 }
 
 async startBooking() {
-  console.log('Login button clicked');
-  this.router.navigate(['/booking']);
+  await this.getMatchingService(["ms1", "ms5"]);
 }
 
+async getMatchingService(myHex: string[]) {
+  if (!this.web3) {
+    console.error('MetaMask not connected');
+    return;
+  }
+
+  const accounts = await this.web3.eth.getAccounts();
+  const selectedAddress = accounts[0];
+
+  // Initialize the contract instance
+  this.contract = new this.web3.eth.Contract(
+    matchingAbi as AbiItem[],
+    this.matchingContractAddress,
+  );
+
+  // Call the createContract function
+  const gasEstimate = await this.contract.methods
+    .getMatchingService(myHex)
+    .estimateGas({ from: selectedAddress });
+
+  this.contract.methods
+    .getMatchingService(myHex)
+    .send({ from: selectedAddress, gas: gasEstimate })
+    .on('transactionHash', (hash: string) => {
+      console.log('Transaction hash:', hash);
+    })
+    .on('receipt', (receipt: any) => {
+      console.log('Transaction receipt events:', receipt);
+      const test = receipt.events.LowestMatchService.returnValues[0];
+      console.log("This is the lowest match service name",test)
+      this.router.navigate(['/booking']);
+    })
+
+    .on('error', (error: Error) => {
+      console.error('Error:', error);
+    });
+}
 
 addRouteToMap(route: any) {
     this.map.addSource('route', {
@@ -182,7 +230,7 @@ fitMapToBounds(pickup: [number, number], dropoff: [number, number]) {
 }
 
 
-  async getCurrentLocation(): Promise<[number, number]> {
+async getCurrentLocation(): Promise<[number, number]> {
     return new Promise((resolve, reject) => {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {

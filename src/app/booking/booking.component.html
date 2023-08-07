@@ -68,12 +68,14 @@
 </div>
 
 <div *ngIf="rideMarkedComplete">
+  <app-user-rating [passengerNumber]="0"></app-user-rating>
   <h3 class="center-text"> Ride Completed</h3>
   <p class="center-text"> Thank you for riding with us</p>
   <div class="center-text">
     <app-rating></app-rating>
   </div>
   <button (click)="rateRide()">Submit</button>
+
   <button (click)="bookNewRide()">Home</button>
 </div>
 <app-footer></app-footer>
