@@ -68,14 +68,17 @@
 </div>
 
 <div *ngIf="rideMarkedComplete">
-  <app-user-rating [passengerNumber]="0"></app-user-rating>
   <h3 class="center-text"> Ride Completed</h3>
   <p class="center-text"> Thank you for riding with us</p>
-  <div class="center-text">
-    <app-rating></app-rating>
+  <div>
+    <p class="center-text"> Please rate your Ride</p>
+    <app-rating class="center-text" (ratingChange)="handleRatingChange($event)"></app-rating>
+    <button (click)="rateRide()">Submit</button>
   </div>
-  <button (click)="rateRide()">Submit</button>
-
+  <div>
+    <p class="center-text">Please rate your Passengers </p>
+    <app-user-rating [passengerNumber]="0"></app-user-rating>
+  </div>
   <button (click)="bookNewRide()">Home</button>
 </div>
 <app-footer></app-footer>

@@ -64,9 +64,6 @@ export class BookingComponent {
   async ngOnInit() {
     console.log(this.rideContractAddress);
 
-    this.sharedService.getRating().subscribe(value => {
-      this.userRatingForRide = value;
-    });
     this.sharedService.getPassengers().subscribe(value => {
       this.passengers = value;
     });
@@ -99,6 +96,11 @@ export class BookingComponent {
 
 
     await this.findRide();
+  }
+
+  handleRatingChange(value: number) {
+    this.userRatingForRide = value;
+    console.log("User Rating: ", this.userRatingForRide);
   }
 
   async findRide() {

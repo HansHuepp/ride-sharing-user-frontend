@@ -138,7 +138,8 @@ h4 {
 .center-text {
   display: flex;
   justify-content: center;
-  padding-bottom: 80px;
+  padding-bottom: 30px;
+  padding-top: 30px;
 }
 
 .left-text {

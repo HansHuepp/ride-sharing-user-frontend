@@ -23,18 +23,19 @@ export class UserRatingComponent {
   rideContractAddress: string | null | any= null;
   rideContract: Contract | undefined | any;
 
-  dropdownActive = true;
+  dropdownActive = false;
 
   stars: number[] = [1, 2, 3, 4, 5];
   seatingPosition = 1;
   startTime = "10:00";
+
+  selectedValue: number = 0;
 
   ngOnInit(): void {
     this.sharedService.getPassengers().subscribe((passengers: any) => {
       this.passenger = passengers[this.passengerNumber];
       console.log("Passengers: ",passengers);
     });
-
     this.sharedService.getMyAddress().subscribe(value => {
       this.myAddress = value;
     });
@@ -48,16 +49,11 @@ export class UserRatingComponent {
       this.rideContractAddress = value;
     }
     );
-
   }
 
-
-
-
-  selectedValue: number = 0;
-
-  handleClick(star: number) {
-    this.selectedValue = star;
+  handleRatingChange(value: number) {
+    console.log("Value changed to ur: ", value);
+    this.selectedValue = value;
   }
 
   toggleDropdown() {
@@ -65,10 +61,11 @@ export class UserRatingComponent {
   }
 
   async sendRating() {
-    await this.addPassengerRating(0, 5);
+    await this.addPassengerRating(0, this.selectedValue);
   }
 
   async addPassengerRating(passengerId: number, rating: number) {
+    console.log('addPassengerRating called with Rating: ', rating);
     if (!this.web3) {
         console.error('MetaMask not connected');
         return;
