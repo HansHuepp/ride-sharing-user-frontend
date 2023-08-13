@@ -64,10 +64,6 @@ export class BookingComponent {
   async ngOnInit() {
     console.log(this.rideContractAddress);
 
-    this.sharedService.getPassengers().subscribe(value => {
-      this.passengers = value;
-    });
-
     this.sharedService.getMyAddress().subscribe(value => {
       this.myAddress = value;
     });
@@ -335,7 +331,6 @@ export class BookingComponent {
   }
 
   async rateRide(){
-
     if (!this.web3) {
       console.error('MetaMask not connected');
       return;
@@ -372,7 +367,7 @@ export class BookingComponent {
       });
   }
 
-  async getPassengers() {
+  async getPassengers(number: number) {
     if (!this.web3) {
         console.error('MetaMask not connected');
         return;
@@ -389,10 +384,11 @@ export class BookingComponent {
 
     try {
         const passengers = await this.rideContract.methods
-            .passengers(0)
+            .passengers(number)
             .call({ from: selectedAddress });
 
-        this.sharedService.updatePassengers(passengers);
+        //push Object to array shared
+        this.passengers.push(passengers);
         console.log('Passenger list:', passengers);
     } catch (error) {
         console.error('Error:', error);
@@ -438,7 +434,10 @@ export class BookingComponent {
       if(functionName == "rideProviderArrivedAtDropoffLocation"){
         this.rideProviderStartedRide = false;
         this.rideProviderArrivedAtDropoffLocation = true;
-        await this.getPassengers();
+        await this.getPassengers(0);
+        await this.getPassengers(1);
+        console.log("Passengers: !!!Hans ", this.passengers);
+        this.sharedService.updatePassengers(this.passengers);
         this.cdr.detectChanges();
       }
 

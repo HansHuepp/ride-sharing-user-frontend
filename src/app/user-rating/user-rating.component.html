@@ -1,14 +1,14 @@
-  <button class="dropbtn" (click)="toggleDropdown()">Passenger Nr. {{ passengerNumber }}</button>
+  <button class="dropbtn" (click)="toggleDropdown()">{{ passengerID }}</button>
   <div *ngIf="dropdownActive">
     <p>Seating Position:</p>
     <div class="seating-number-plate">
       <div class="seating-buttons">
-        <button class="seating-button" [ngClass]="{'button2': seatingPosition === 1}">1</button>
+        <button class="seating-button" [ngClass]="{'button2': seatingPosition == 1}">1</button>
         <button class="seating-button">-</button>
-        <button class="seating-button" [ngClass]="{'button2': seatingPosition === 2}">2</button>
-        <button class="seating-button" [ngClass]="{'button2': seatingPosition === 3}">3</button>
-        <button class="seating-button" [ngClass]="{'button2': seatingPosition === 4}">4</button>
-        <button class="seating-button" [ngClass]="{'button2': seatingPosition === 5}">5</button>
+        <button class="seating-button" [ngClass]="{'button2': seatingPosition == 2}">2</button>
+        <button class="seating-button" [ngClass]="{'button2': seatingPosition == 3}">3</button>
+        <button class="seating-button" [ngClass]="{'button2': seatingPosition == 4}">4</button>
+        <button class="seating-button" [ngClass]="{'button2': seatingPosition == 5}">5</button>
       </div>
     </div>
     <p>Please rate the Passenger:</p>

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectorRef } from '@angular/core';
 import { SharedService } from '../services/shared.service';
 import Web3 from 'web3';
 import  Contract from 'web3'
@@ -11,7 +11,7 @@ import contractAbi from '../abi-files/contractAbi.json' ;
   styleUrls: ['./user-rating.component.css']
 })
 export class UserRatingComponent {
-  constructor(private sharedService: SharedService) { }
+  constructor(private sharedService: SharedService, private cdr: ChangeDetectorRef) { }
 
   @Input() passengerNumber: any;
 
@@ -25,9 +25,10 @@ export class UserRatingComponent {
 
   dropdownActive = false;
 
+  passengerID = "0";
   stars: number[] = [1, 2, 3, 4, 5];
   seatingPosition = 1;
-  startTime = "10:00";
+  startTime = 1;
 
   selectedValue: number = 0;
 
@@ -35,6 +36,11 @@ export class UserRatingComponent {
     this.sharedService.getPassengers().subscribe((passengers: any) => {
       this.passenger = passengers[this.passengerNumber];
       console.log("Passengers: ",passengers);
+      this.passengerID = this.passenger.passengerID;
+      this.seatingPosition = this.passenger.seatingPosition;
+      this.startTime = this.passenger.startTime;
+      console.log("Passenger SP!!!! : ",this.passenger.seatingPosition);
+      this.cdr.detectChanges(); // Manually trigger change detection
     });
     this.sharedService.getMyAddress().subscribe(value => {
       this.myAddress = value;
@@ -47,8 +53,7 @@ export class UserRatingComponent {
     });
     this.sharedService.getRideContractAddress().subscribe(value => {
       this.rideContractAddress = value;
-    }
-    );
+    });
   }
 
   handleRatingChange(value: number) {

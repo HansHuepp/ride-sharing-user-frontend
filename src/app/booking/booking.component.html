@@ -72,12 +72,14 @@
   <p class="center-text"> Thank you for riding with us</p>
   <div>
     <p class="center-text"> Please rate your Ride</p>
+    <p class="center-text-small">Please Note: The Rating is a very important Metric. Only use ratings below 5 if you have specific complaints</p>
     <app-rating class="center-text" (ratingChange)="handleRatingChange($event)"></app-rating>
     <button (click)="rateRide()">Submit</button>
   </div>
   <div>
     <p class="center-text">Please rate your Passengers </p>
     <app-user-rating [passengerNumber]="0"></app-user-rating>
+    <app-user-rating [passengerNumber]="1"></app-user-rating>
   </div>
   <button (click)="bookNewRide()">Home</button>
 </div>
