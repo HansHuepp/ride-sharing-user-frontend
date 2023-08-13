@@ -24,7 +24,7 @@ export class BookingComponent {
   myAddress: string  = "";
   myBalance: string  = "";
 
-  contractFactoryAddress = '0x229b8E5cC722072C7d2346A5d98A20BF9d2A2F56';
+  contractFactoryAddress = '0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8';
   contractFactory: Contract | undefined | any;
 
   rideContractAddress: string | null | any= null;

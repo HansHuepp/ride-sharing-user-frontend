@@ -12,6 +12,12 @@
 				"internalType": "string",
 				"name": "serviceName",
 				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "serviceRating",
+				"type": "uint256"
 			}
 		],
 		"name": "LowestMatchService",

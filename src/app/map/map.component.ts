@@ -46,7 +46,7 @@ export class MapComponent implements OnInit {
   web3: Web3 | any;
   contract: Contract | undefined | any;
   rideContractAddress: string | null | any= null;
-  matchingContractAddress: string = "0xf4C1668BcC9F33DcB1111e3bF5906DD0e454157D";
+  matchingContractAddress: string = "0xd9145CCE52D386f254917e481eB44e9943F39138";
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -164,6 +164,7 @@ async startBooking() {
 }
 
 async getMatchingService(myHex: string[]) {
+  this.router.navigate(['/booking']);
   if (!this.web3) {
     console.error('MetaMask not connected');
     return;
@@ -193,7 +194,7 @@ async getMatchingService(myHex: string[]) {
       console.log('Transaction receipt events:', receipt);
       const test = receipt.events.LowestMatchService.returnValues[0];
       console.log("This is the lowest match service name",test)
-      this.router.navigate(['/booking']);
+
     })
 
     .on('error', (error: Error) => {
