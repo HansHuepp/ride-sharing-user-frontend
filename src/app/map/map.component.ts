@@ -46,7 +46,7 @@ export class MapComponent implements OnInit {
   web3: Web3 | any;
   contract: Contract | undefined | any;
   rideContractAddress: string | null | any= null;
-  matchingContractAddress: string = "0xd9145CCE52D386f254917e481eB44e9943F39138";
+  matchingContractAddress: string = "0xDCB7DA8d570263173Dc48B279425f90C86e39643";
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -194,7 +194,6 @@ async getMatchingService(myHex: string[]) {
       console.log('Transaction receipt events:', receipt);
       const test = receipt.events.LowestMatchService.returnValues[0];
       console.log("This is the lowest match service name",test)
-
     })
 
     .on('error', (error: Error) => {
