@@ -46,7 +46,7 @@ export class MapComponent implements OnInit {
   web3: Web3 | any;
   contract: Contract | undefined | any;
   rideContractAddress: string | null | any= null;
-  matchingContractAddress: string = "0xDCB7DA8d570263173Dc48B279424f90C86e39643";
+  matchingContractAddress: string = "0xDCB7DA8d570263173Dc48B279425f90C86e39643";
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
