@@ -8,6 +8,7 @@ import { SharedService } from '../services/shared.service';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { RequestRideService } from '../services/request-ride.service';
+import { environment} from '../../environments/environment.development';
 
 declare let window:any;
 
@@ -24,7 +25,7 @@ export class BookingComponent {
   myAddress: string  = "";
   myBalance: string  = "";
 
-  contractFactoryAddress = '0xBf8C439DC6ef497e0604c3023852bb054484bB23';
+  contractFactoryAddress = environment.CONTRACT_FACTORY;
   contractFactory: Contract | undefined | any;
 
   rideContractAddress: string | null | any= null;

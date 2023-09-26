@@ -8,7 +8,9 @@ import { catchError, tap } from 'rxjs/operators';
 import Web3 from 'web3';
 import  Contract from 'web3'
 import { AbiItem } from 'web3-utils';
-import matchingAbi from '../abi-files/matchingAbi.json' ;
+import matchingAbi from '../abi-files/matchingAbi.json';
+import { environment } from 'src/environments/environment.development';
+
 
 interface MapboxDirectionsResponse {
   routes: Route[];
@@ -46,7 +48,7 @@ export class MapComponent implements OnInit {
   web3: Web3 | any;
   contract: Contract | undefined | any;
   rideContractAddress: string | null | any= null;
-  matchingContractAddress: string = "0xDCB7DA8d570263173Dc48B279425f90C86e39643";
+  matchingContractAddress: string = environment.MATCHING_CONTRACT;
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -164,7 +166,6 @@ async startBooking() {
 }
 
 async getMatchingService(myHex: string[]) {
-  this.router.navigate(['/booking']);
   if (!this.web3) {
     console.error('MetaMask not connected');
     return;
@@ -194,6 +195,7 @@ async getMatchingService(myHex: string[]) {
       console.log('Transaction receipt events:', receipt);
       const test = receipt.events.LowestMatchService.returnValues[0];
       console.log("This is the lowest match service name",test)
+      this.router.navigate(['/booking']);
     })
 
     .on('error', (error: Error) => {

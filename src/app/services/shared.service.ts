@@ -22,7 +22,7 @@ export class SharedService {
 
   private auctionResult = new BehaviorSubject<string>("");
 
-  private maxUserRating = new BehaviorSubject<number>(4.6);
+  private maxUserRating = new BehaviorSubject<number>(4.7);
   private userRating = new BehaviorSubject<number>(4.2);
   private minRating = new BehaviorSubject<number>(4);
   private maxPassengers = new BehaviorSubject<number>(2);

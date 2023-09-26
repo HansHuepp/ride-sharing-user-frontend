@@ -89,7 +89,7 @@ export class RequestRideService {
         type: 'Point',
         coordinates: this.dropoffLocationCoordinatesGrid
       },
-      gridLocation: this.getGridLocation(this.pickupLocationCoordinatesGrid, 10),
+      gridLocation: this.getGridLocation(this.pickupLocationCoordinatesGrid, 9),
       rating: this.maxUserRating,
       userPublicKey: this.myPublicKey,
       maxUserRating: this.maxUserRating,
